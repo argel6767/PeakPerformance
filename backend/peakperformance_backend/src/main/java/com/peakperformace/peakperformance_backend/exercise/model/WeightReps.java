@@ -1,4 +1,4 @@
-package com.peakperformace.peakperformance_backend.exercise.liftmodel;
+package com.peakperformace.peakperformance_backend.exercise.model;
 
 /*
  * Thw weight and reps done for a single set

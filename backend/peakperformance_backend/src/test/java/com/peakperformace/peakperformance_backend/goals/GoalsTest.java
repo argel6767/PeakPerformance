@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import com.peakperformace.peakperformance_backend.exercise.liftmodel.*;
+import com.peakperformace.peakperformance_backend.exercise.model.*;
 
 public class GoalsTest {
 

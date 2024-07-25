@@ -1,4 +1,4 @@
-package com.peakperformace.peakperformance_backend.exercise.liftmodel;
+package com.peakperformace.peakperformance_backend.exercise.model;
 
 import java.util.List;
 

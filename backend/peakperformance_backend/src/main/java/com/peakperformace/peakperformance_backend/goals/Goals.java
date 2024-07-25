@@ -10,7 +10,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.List;
 
-import com.peakperformace.peakperformance_backend.exercise.liftmodel.Lift;
+import com.peakperformace.peakperformance_backend.exercise.model.Lift;
 
 @Entity
 @Table

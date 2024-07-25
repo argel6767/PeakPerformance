@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.peakperformace.peakperformance_backend.exercise.liftmodel.Lift;
+import com.peakperformace.peakperformance_backend.exercise.model.Lift;
 import com.peakperformace.peakperformance_backend.goals.Goals;
 
 import jakarta.persistence.Column;
