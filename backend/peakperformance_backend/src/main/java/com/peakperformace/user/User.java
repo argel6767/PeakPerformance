@@ -41,13 +41,64 @@ public class User {
     @Column(columnDefinition = "jsonb")
     @Convert(converter = Object.class)//placehold until JsonConver class is made
     private List<Object> currentLifts; //placeholder until lift and LiftSet classes are made
-    private Object goals; //placeholer until Goal class is made
+    private Object goals; //placeholder until Goal class is made
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     public User() {}
 
+    //goals and current lifts are given by user
+    public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height, Integer weight, List<Object> currentLifts, Object goals) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.dob = dob;
+        this.height = height;
+        this.weight = weight;
+        this.currentLifts = currentLifts;
+        this.goals = goals;
+    }
+
     
+    //no current lifts given
+    public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height,
+            Integer weight, Object goals) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.dob = dob;
+        this.height = height;
+        this.weight = weight;
+        this.currentLifts = null;
+        this.goals = goals;
+    }
+
+    //no goals given
+    public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height,
+            Integer weight, List<Object> currentLifts) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.dob = dob;
+        this.height = height;
+        this.weight = weight;
+        this.currentLifts = currentLifts;
+    }
+
+    //no current lifts or goals given
+    public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height,
+            Integer weight) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.dob = dob;
+        this.height = height;
+        this.weight = weight;
+    }
 
     public Long getId() {
         return id;
