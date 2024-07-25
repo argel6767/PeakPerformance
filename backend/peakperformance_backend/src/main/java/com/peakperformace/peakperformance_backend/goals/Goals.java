@@ -106,7 +106,7 @@ public class Goals {
     public String overallGoalsStatus() {
         if (!hasWeightGoal() && !hasLiftGoals()) return "no goals set";
         else if (!hasWeightGoal()) return "only lift goals set";
-        else if (!hasLiftGoals()) return "only weigth goals set";
+        else if (!hasLiftGoals()) return "only weight goal set";
         else return "both goals set";
     }
 
