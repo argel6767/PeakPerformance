@@ -10,12 +10,16 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
 import com.peakperformace.peakperformance_backend.goals.Goals;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -41,10 +45,18 @@ public class User {
     private LocalDate dob;   
     private Integer height;
     private Integer weight;
+    
     @Column(columnDefinition = "jsonb")
     @Convert(converter = Object.class)//placehold until JsonConver class is made
-    private List<Lift> currentLifts; 
+    private List<Lift> currentLifts;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "goals_id") // This is the foreign key in the User table referencing Goals
     private Goals goals; //will be null if no goals are given
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Object> exerciseSessions; //place holder till ExerciseSession is made
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

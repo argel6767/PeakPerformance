@@ -6,11 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.List;
 
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
+import com.peakperformace.peakperformance_backend.user.User;
 
 @Entity
 @Table
@@ -36,7 +38,18 @@ public class Goals {
     @Column(columnDefinition = "jsonb")
     @Convert(converter = Object.class) // Object placeholder for until Jsonb converter class is made
     private List<Lift> liftGoals;
+
+    @OneToOne(mappedBy = "goals")
+    private User user;
     
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     //both weight and lift goals are given
     public Goals(Integer weightGoal, List<Lift> liftGoals) {
         this.weightGoal = weightGoal;
