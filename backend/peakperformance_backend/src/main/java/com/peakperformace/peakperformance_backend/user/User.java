@@ -1,4 +1,4 @@
-package com.peakperformace.user;
+package com.peakperformace.peakperformance_backend.user;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
