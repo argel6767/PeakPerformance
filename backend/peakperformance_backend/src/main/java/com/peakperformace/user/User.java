@@ -34,8 +34,8 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private LocalDate dob;
-    private String password;    
+    private String password; 
+    private LocalDate dob;   
     private Integer height;
     private Integer weight;
     @Column(columnDefinition = "jsonb")
@@ -45,72 +45,87 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    public User() {}
+
+    
+
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getFirstName() {
         return firstName;
     }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     public String getLastName() {
         return lastName;
     }
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     public String getEmail() {
         return email;
     }
     public void setEmail(String email) {
         this.email = email;
     }
+
     public LocalDate getDob() {
         return dob;
     }
     public void setDob(LocalDate dob) {
         this.dob = dob;
     }
+
     public String getPassword() {
         return password;
     }
     public void setPassword(String password) {
         this.password = password;
     }
+
     public Integer getHeight() {
         return height;
     }
     public void setHeight(Integer height) {
         this.height = height;
     }
+
     public Integer getWeight() {
         return weight;
     }
     public void setWeight(Integer weight) {
         this.weight = weight;
     }
+
     public List<Object> getCurrentLifts() {
         return currentLifts;
     }
     public void setCurrentLifts(List<Object> currentLifts) {
         this.currentLifts = currentLifts;
     }
+
     public Object getGoals() {
         return goals;
     }
     public void setGoals(Object goals) {
         this.goals = goals;
     }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
     @Override
     public String toString() {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", dob="
