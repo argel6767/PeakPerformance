@@ -55,18 +55,59 @@ public class Goals {
         this.liftGoals = liftGoals;
     }
 
+    //no goals are given
+    public Goals() {
+        this.weightGoal = null;
+        this.liftGoals = null;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Integer getWeightGoal() {
         return weightGoal;
     }
     public void setWeightGoal(Integer weightGoal) {
         this.weightGoal = weightGoal;
     }
-    
+    //returns status of weightGoal
+    public String weightGoalStatus() {
+        if (hasWeightGoal()) return "weight goal set";
+        else return "weight goal not set";
+    }
+
+    //checks if a weight goal is present
+    private boolean hasWeightGoal() {
+        return weightGoal != null;
+    }
+
     public List<Lift> getLiftGoals() {
         return liftGoals;
     }
     public void setLiftGoals(List<Lift> liftGoals) {
         this.liftGoals = liftGoals;
+    } 
+    //returns status of liftGoals
+    public String liftGoalStatus() {
+        if (hasLiftGoals()) return "lift goals set";
+        else return "lift goals not set";
+    }
+    //checks if lifting goals are present
+    private boolean hasLiftGoals() {
+        return liftGoals != null;
+    }
+
+    //overall status as to what goals have/haven't been set
+    public String overallGoalsStatus() {
+        if (!hasWeightGoal() && !hasLiftGoals()) return "no goals set";
+        else if (!hasWeightGoal()) return "only lift goals set";
+        else if (!hasLiftGoals()) return "only weigth goals set";
+        else return "both goals set";
     }
 
 }
