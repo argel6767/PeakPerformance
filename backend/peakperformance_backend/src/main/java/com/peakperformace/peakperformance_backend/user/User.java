@@ -42,7 +42,7 @@ public class User {
     private Integer weight;
     @Column(columnDefinition = "jsonb")
     @Convert(converter = Object.class)//placehold until JsonConver class is made
-    private List<Lift> currentLifts; //placeholder until lift and LiftSet classes are made
+    private List<Lift> currentLifts; 
     private Object goals; //placeholder until Goal class is made
     @CreationTimestamp
     private LocalDateTime createdAt;
