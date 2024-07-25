@@ -87,6 +87,7 @@ public class User {
         this.height = height;
         this.weight = weight;
         this.currentLifts = currentLifts;
+        this.goals = new Goals();
     }
 
     //no current lifts or goals given
