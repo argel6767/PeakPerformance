@@ -1,7 +1,7 @@
 package com.peakperformace.peakperformance_backend.exercise.model;
 
 /*
- * Thw weight and reps done for a single set
+ * The weight and reps done for a single set
  */
 public class WeightReps {
     private int weight;
