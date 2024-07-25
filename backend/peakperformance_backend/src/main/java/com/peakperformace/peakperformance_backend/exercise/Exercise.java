@@ -1,4 +1,6 @@
-package com.peakperformace.peakperformance_backend.exercise.model;
+package com.peakperformace.peakperformance_backend.exercise;
+
+import com.peakperformace.peakperformance_backend.exercise.model.WorkoutType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
