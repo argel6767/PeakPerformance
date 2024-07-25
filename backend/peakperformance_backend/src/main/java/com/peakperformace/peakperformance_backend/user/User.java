@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.peakperformace.peakperformance_backend.exercise.liftmodel.Lift;
+import com.peakperformace.peakperformance_backend.goals.Goals;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -43,12 +44,12 @@ public class User {
     @Column(columnDefinition = "jsonb")
     @Convert(converter = Object.class)//placehold until JsonConver class is made
     private List<Lift> currentLifts; 
-    private Object goals; //placeholder until Goal class is made
+    private Goals goals; //will be null if no goals are given
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     //goals and current lifts are given by user
-    public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height, Integer weight, List<Lift> currentLifts, Object goals) {
+    public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height, Integer weight, List<Lift> currentLifts, Goals goals) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -63,7 +64,7 @@ public class User {
     
     //no current lifts given
     public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height,
-            Integer weight, Object goals) {
+            Integer weight, Goals goals) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -166,7 +167,7 @@ public class User {
     public Object getGoals() {
         return goals;
     }
-    public void setGoals(Object goals) {
+    public void setGoals(Goals goals) {
         this.goals = goals;
     }
 
