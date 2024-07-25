@@ -45,8 +45,6 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public User() {}
-
     //goals and current lifts are given by user
     public User(String firstName, String lastName, String email, String password, LocalDate dob, Integer height, Integer weight, List<Object> currentLifts, Object goals) {
         this.firstName = firstName;
