@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.peakperformace.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
 import com.peakperformace.peakperformance_backend.goals.Goals;
 
@@ -47,7 +48,7 @@ public class User {
     private Integer weight;
     
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = Object.class)//placehold until JsonConver class is made
+    @Convert(converter = JSONBConverter.class)
     private List<Lift> currentLifts;
 
     @OneToOne(cascade = CascadeType.ALL)
