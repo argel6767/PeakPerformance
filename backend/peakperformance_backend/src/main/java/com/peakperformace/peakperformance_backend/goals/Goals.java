@@ -11,6 +11,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.List;
 
+import com.peakperformace.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
 import com.peakperformace.peakperformance_backend.user.User;
 
@@ -36,7 +37,7 @@ public class Goals {
     private Long id;
     private Integer weightGoal;
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = Object.class) // Object placeholder for until Jsonb converter class is made
+    @Convert(converter = JSONBConverter.class) 
     private List<Lift> liftGoals;
 
     @OneToOne(mappedBy = "goals")
