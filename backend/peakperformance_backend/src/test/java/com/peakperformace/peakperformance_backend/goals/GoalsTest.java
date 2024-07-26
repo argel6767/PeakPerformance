@@ -21,8 +21,8 @@ public class GoalsTest {
     List<WeightReps> set2 = List.of(squat);
     
     // make Lift object for each lift goal
-    Lift benchPressLift = new Lift("bench press", set1);
-    Lift squatLift = new Lift("squat", set2);
+    Lift benchPressLift = new Lift("bench press", 100, 10);
+    Lift squatLift = new Lift("squat", 100, 10);
     List<Lift> liftingGoals = List.of(benchPressLift, squatLift);
 
     @Test
