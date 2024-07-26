@@ -115,6 +115,11 @@ public class User {
         this.weight = weight;
     }
 
+    public User() {
+        //TODO Auto-generated constructor stub
+    }
+
+
     public Long getId() {
         return id;
     }

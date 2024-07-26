@@ -66,11 +66,11 @@ public class UserService {
     public List<Lift> getUserCurrentLiftsById(Long id) {
         return userRepo.getCurrentLiftsOfUserById(id);
     }
-    
+
     /*
      * Exception that is thrown when a query looking for a User returns null, meaning they do not exist
      */
-    private class UserNotFoundException extends Exception {
+    public class UserNotFoundException extends Exception {
 
         public UserNotFoundException(String string) {
             super(string);
