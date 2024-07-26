@@ -21,11 +21,15 @@ public class JSONBConverterTest {
     private String jsonb;
     private String jsonResponse;
     private List<Lift> lifts;
+    private String expectedToString;
 
     @BeforeEach
     void init() {
         converter = new JSONBConverter(new ObjectMapper());
         lifts = new ArrayList<>();
+        jsonb = "";
+        jsonResponse = "";
+        expectedToString = "";
     }
 
     @Test
@@ -59,7 +63,9 @@ public class JSONBConverterTest {
         jsonb = "[{\"exerciseName\":\"Bench Press\",\"sets\":[{\"weight\":100,\"reps\":10}]}]";
         lifts = converter.convertToEntityAttribute(jsonb);
 
-        assertEquals("[Lift [exerciseName=Bench Press, sets = [weight=100, reps=10], ]]", lifts.toString());
+        expectedToString = "[Lift [exerciseName=Bench Press, sets = [weight=100, reps=10], ]]";
+
+        assertEquals(expectedToString, lifts.toString());
         assertEquals(1, lifts.size());
     }
 
@@ -69,7 +75,9 @@ public class JSONBConverterTest {
         lifts = converter.convertToEntityAttribute(jsonb);
 
         assertTrue(lifts != null);
-        assertEquals("[Lift [exerciseName=Bench Press, sets = [weight=100, reps=10],  [weight=105, reps=8],  [weight=110, reps=6], ], Lift [exerciseName=Squat, sets = [weight=200, reps=10],  [weight=210, reps=8],  [weight=220, reps=6], ]]", lifts.toString());
+        expectedToString = "[Lift [exerciseName=Bench Press, sets = [weight=100, reps=10],  [weight=105, reps=8],  [weight=110, reps=6], ], Lift [exerciseName=Squat, sets = [weight=200, reps=10],  [weight=210, reps=8],  [weight=220, reps=6], ]]";
+
+        assertEquals(expectedToString, lifts.toString());
         assertEquals(2, lifts.size());
     }
 
