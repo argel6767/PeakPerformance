@@ -41,7 +41,7 @@ public class ExerciseSession {
     private Exercise exercise;
 
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = JSONBConverter.class)//placehold until JsonConver class is made
+    @Convert(converter = JSONBConverter.class)
     private List<WeightReps> sets;
     
     public ExerciseSession(LocalDateTime dateTimeofExercise, List<WeightReps> sets,
@@ -75,8 +75,5 @@ public class ExerciseSession {
     public void setSets(List<WeightReps> sets) {
         this.sets = sets;
     }
-
-    
-
 
 }

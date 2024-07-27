@@ -24,7 +24,7 @@ public class ExerciseSessionTest {
     void testExerciseSessionCreation(){
 
     ExerciseSession exerciseSession = new ExerciseSession(LocalDateTime.of(2024, 06, 05, 5, 20), set1, lateralPulldown);
-    assertEquals(LocalDateTime.of(2024, 06, 05, 5, 20), exerciseSession.getDateTimeofExercise());
+    assertEquals(LocalDateTime.of(2024, 06,  05, 5, 20), exerciseSession.getDateTimeofExercise());
     assertEquals(set1, exerciseSession.getSets());
     assertEquals(lateralPulldown, exerciseSession.getExercise());
 
