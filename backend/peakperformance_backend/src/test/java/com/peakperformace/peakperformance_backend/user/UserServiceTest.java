@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.peakperformace.peakperformance_backend.user.UserService.UserNotFoundException;
 
+//TODO FINSIH THESE ONCE ExerciseSession is merged!!!!!
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class UserServiceTest {
