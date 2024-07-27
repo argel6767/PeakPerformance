@@ -1,6 +1,13 @@
 package com.peakperformace.peakperformance_backend.exercisesession;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 
 public interface ExerciseSessionRepository extends JpaRepository<ExerciseSession, Long> {
 
