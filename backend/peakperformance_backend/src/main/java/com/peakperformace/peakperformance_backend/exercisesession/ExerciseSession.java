@@ -1,9 +1,9 @@
 package com.peakperformace.peakperformance_backend.exercisesession;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.peakperformace.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformace.peakperformance_backend.exercise.Exercise;
 import com.peakperformace.peakperformance_backend.exercise.model.WeightReps;
 
@@ -34,40 +34,30 @@ public class ExerciseSession {
         generator = "exercisesession_sequence"
     )
 
-    private LocalTime timeOfExercise;
-    private LocalDate dateOfExercise;
+    private LocalDateTime dateTimeofExercise;
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "exercise_id", nullable = false)
     private Exercise exercise;
 
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = Object.class)//placehold until JsonConver class is made
+    @Convert(converter = JSONBConverter.class)//placehold until JsonConver class is made
     private List<WeightReps> sets;
     
-    public ExerciseSession(LocalTime timeOfExercise, LocalDate dateOfExercise, List<WeightReps> sets,
+    public ExerciseSession(LocalDateTime dateTimeofExercise, List<WeightReps> sets,
             Exercise exercise) {
-        this.timeOfExercise = timeOfExercise;
-        this.dateOfExercise = dateOfExercise;
+        this.dateTimeofExercise = dateTimeofExercise;
         this.sets = sets;
         this.exercise = exercise;
 
     }
 
-    public LocalTime getTimeOfExercise() {
-        return timeOfExercise;
+    public LocalDateTime getDateTimeofExercise() {
+        return dateTimeofExercise;
     }
 
-    public void setTimeOfExercise(LocalTime timeOfExercise) {
-        this.timeOfExercise = timeOfExercise;
-    }
-
-    public LocalDate getDateOfExercise() {
-        return dateOfExercise;
-    }
-
-    public void setDateOfExercise(LocalDate dateOfExercise) {
-        this.dateOfExercise = dateOfExercise;
+    public void setDateTimeofExercise(LocalDateTime dateTimeofExercise) {
+        this.dateTimeofExercise = dateTimeofExercise;
     }
 
     public Exercise getExercise() {
@@ -85,5 +75,8 @@ public class ExerciseSession {
     public void setSets(List<WeightReps> sets) {
         this.sets = sets;
     }
+
+    
+
 
 }

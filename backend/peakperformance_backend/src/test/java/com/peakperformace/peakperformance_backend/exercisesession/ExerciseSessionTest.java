@@ -2,8 +2,7 @@ package com.peakperformace.peakperformance_backend.exercisesession;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -24,9 +23,8 @@ public class ExerciseSessionTest {
     @Test
     void testExerciseSessionCreation(){
 
-    ExerciseSession exerciseSession = new ExerciseSession(LocalTime.of(5,10), LocalDate.of(2024, 6, 18), set1, lateralPulldown);
-    assertEquals(LocalTime.of(5,10), exerciseSession.getTimeOfExercise());
-    assertEquals(LocalDate.of(2024, 6, 18), exerciseSession.getDateOfExercise());
+    ExerciseSession exerciseSession = new ExerciseSession(LocalDateTime.of(2024, 06, 05, 5, 20), set1, lateralPulldown);
+    assertEquals(LocalDateTime.of(2024, 06, 05, 5, 20), exerciseSession.getDateTimeofExercise());
     assertEquals(set1, exerciseSession.getSets());
     assertEquals(lateralPulldown, exerciseSession.getExercise());
 
