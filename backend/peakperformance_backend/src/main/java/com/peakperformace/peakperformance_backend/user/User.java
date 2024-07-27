@@ -2,13 +2,14 @@ package com.peakperformace.peakperformance_backend.user;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.peakperformace.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
+import com.peakperformace.peakperformance_backend.exercisesession.ExerciseSession;
 import com.peakperformace.peakperformance_backend.goals.Goals;
 
 import jakarta.persistence.CascadeType;
@@ -52,11 +53,11 @@ public class User {
     private List<Lift> currentLifts;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "goals_id") // This is the foreign key in the User table referencing Goals
+    @JoinColumn(name = "goals_id", referencedColumnName = "id") // This is the foreign key in the User table referencing Goals
     private Goals goals; //will be null if no goals are given
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Object> exerciseSessions; //place holder till ExerciseSession is made
+    private List<ExerciseSession> exerciseSessions = new ArrayList<>(); 
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -158,6 +159,17 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    public List<ExerciseSession> getExerciseSessions() {
+        return exerciseSessions;
+    }
+
+
+    public void setExerciseSessions(List<ExerciseSession> exerciseSessions) {
+        this.exerciseSessions = exerciseSessions;
+    }
+
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -183,7 +195,7 @@ public class User {
         this.currentLifts = currentLifts;
     }
 
-    public Object getGoals() {
+    public Goals getGoals() {
         return goals;
     }
     public void setGoals(Goals goals) {

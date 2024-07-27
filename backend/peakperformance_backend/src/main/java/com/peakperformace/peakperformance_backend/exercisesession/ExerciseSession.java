@@ -6,6 +6,7 @@ import java.util.List;
 import com.peakperformace.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformace.peakperformance_backend.exercise.Exercise;
 import com.peakperformace.peakperformance_backend.exercise.model.WeightReps;
+import com.peakperformace.peakperformance_backend.user.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 
@@ -43,6 +45,10 @@ public class ExerciseSession {
     @Column(columnDefinition = "jsonb")
     @Convert(converter = JSONBConverter.class)//placehold until JsonConver class is made
     private List<WeightReps> sets;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     
     public ExerciseSession(LocalDateTime dateTimeofExercise, List<WeightReps> sets,
             Exercise exercise) {
