@@ -1,7 +1,10 @@
 package com.peakperformace.peakperformance_backend.user;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
+
+@WebMvcTest(UserController.class)
 public class UserControllerTest {
     @Test
     void testAddLiftById() {
