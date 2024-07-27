@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
+import java.util.ArrayList;
 
 @Service
 public class UserService {
@@ -20,12 +21,14 @@ public class UserService {
      * Will try to find user by id, will return null if none found with id
      * will throw UserNotFoundException if is null
      */
-    public Optional<User> getUserById(Long id) throws UserNotFoundException {
-        Optional<User> user = userRepo.findById(id);
+    public User getUserById(Long id) throws UserNotFoundException {
+        Optional<User> userOptional = userRepo.findById(id);
         
-        if(!user.isPresent()) {
+        if(!userOptional.isPresent()) {
             throw new UserNotFoundException(id + "is not attached to any user");
         }
+
+        User user = userOptional.get();
         return user;
     }
 
@@ -33,11 +36,13 @@ public class UserService {
      * Will try to find user by email, will return null if none found with email
      * will throw UserNotFoundException if is null
      */
-    public Optional<User> getUserByEmail(String email) throws UserNotFoundException {
-        Optional<User> user = userRepo.findUserByEmail(email);
-        if (!user.isPresent()) {
+    public User getUserByEmail(String email) throws UserNotFoundException {
+        Optional<User> userOptional = userRepo.findUserByEmail(email);
+        if (!userOptional.isPresent()) {
             throw new UserNotFoundException("email not attched to any user");
         }
+
+        User user = userOptional.get();
         return user;
     }
 
@@ -61,6 +66,24 @@ public class UserService {
     //can be used for either updating a users current lifts or if they didnt put any originally
     public void updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) {
         userRepo.changeCurrentLiftsOfUserById(id, currentLifts);
+    }
+
+    //add more lifts to an already made list or make current lifts lists if null
+    public void addLiftToUserCurrentLiftsById(Long id, Lift lift) throws UserNotFoundException {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(id + " not attached to any user");
+        }
+        User user = userOptional.get();
+        List<Lift> currentLifts = user.getCurrentLifts();
+
+        //if user didnt add current lifts originally
+        if (currentLifts == null) {
+            currentLifts = new ArrayList<>();
+        }
+        currentLifts.add(lift);
+        user.setCurrentLifts(currentLifts);
+        userRepo.save(user);
     }
 
     public List<Lift> getUserCurrentLiftsById(Long id) {
