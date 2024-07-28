@@ -3,6 +3,8 @@ package com.peakperformace.peakperformance_backend.user;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
+import com.peakperformance.peakperformance_backend.user.UserController;
+
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {

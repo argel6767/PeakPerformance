@@ -4,8 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.peakperformace.peakperformance_backend.exercise.model.Lift;
-import com.peakperformace.peakperformance_backend.exercise.model.WeightReps;
+import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
+import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
