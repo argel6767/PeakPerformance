@@ -1,9 +1,11 @@
 package com.peakperformace.peakperformance_backend.exercise;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import com.peakperformace.peakperformance_backend.exercise.model.WorkoutType;
+import com.peakperformance.peakperformance_backend.exercise.Exercise;
+import com.peakperformance.peakperformance_backend.exercise.model.WorkoutType;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExerciseTest {
     
