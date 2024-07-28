@@ -1,12 +1,14 @@
 package com.peakperformance.peakperformance_backend.goals;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.user.User;
 
-import java.util.Optional;
-import java.util.List;
-import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 
 
 
@@ -73,6 +75,21 @@ public class GoalsService {
         goalsRepo.save(goal);
     }
 
+
+    @Transactional
+    public void updateGoalLiftsById(Long id, List<Lift> liftGoals) throws GoalNotFoundException {
+        Optional<Goals> goalOptional = goalsRepo.findById(id);
+
+        if (!goalOptional.isPresent()) {
+            throw new GoalNotFoundException();
+        }
+
+        Goals goal = goalOptional.get();
+
+        goal.setLiftGoals(liftGoals);
+
+        goalsRepo.save(goal);
+    }
 
 
     public class GoalNotFoundException extends Exception {
