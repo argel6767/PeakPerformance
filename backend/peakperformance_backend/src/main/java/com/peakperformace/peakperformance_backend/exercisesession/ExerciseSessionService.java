@@ -23,18 +23,19 @@ public class ExerciseSessionService {
         return exerciseSessionRepository.findAll();
     }
 
-    public List<ExerciseSession> getExerciseSessionByExercise(Exercise exercise) {
+    public ExerciseSession getExerciseSessionByExercise(Exercise exercise) {
         return exerciseSessionRepository.findByExercise(exercise);
     }
 
         public Optional<ExerciseSession> getExerciseSessionById(Long id) {
         return exerciseSessionRepository.findById(id);
 
-    public List<ExerciseSession> getExerciseByDateTime(LocalDateTime dateTimeOFExercise) throws ExerciseSessionNotFoundException {
+    public List<ExerciseSession> getExerciseByDateTime(LocalDateTime dateTimeOFExercise)  {
         if (getExerciseByDateTime(null)){
             throw new ExerciseSessionNotFoundException("There is no exercise session under this date");
         }
 
         return exerciseSessionRepository.findByDateTimeofExercise(dateTimeOFExercise);
     }
+}
 }
