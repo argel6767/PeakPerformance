@@ -2,10 +2,14 @@ package com.peakperformance.peakperformance_backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+
+import com.peakperformance.peakperformance_backend.auth.RsaKeyProperties;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
+@EnableConfigurationProperties(RsaKeyProperties.class)
 public class PeakperformanceBackendApplication {
 
 	public static void main(String[] args) {
