@@ -12,7 +12,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @Table
@@ -51,11 +51,11 @@ public class ExerciseSession {
     private User user;
     
     public ExerciseSession(LocalDateTime dateTimeofExercise, List<WeightReps> sets,
-            Exercise exercise) {
+            Exercise exercise, User user) {
         this.dateTimeofExercise = dateTimeofExercise;
         this.sets = sets;
         this.exercise = exercise;
-
+        this.user = user;
     }
 
     public LocalDateTime getDateTimeofExercise() {
@@ -80,6 +80,14 @@ public class ExerciseSession {
 
     public void setSets(List<WeightReps> sets) {
         this.sets = sets;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

@@ -1,10 +1,12 @@
 package com.peakperformace.peakperformance_backend.user;
 
-import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.peakperformace.peakperformance_backend.exercise.model.Lift;
-import java.util.ArrayList;
 
 @Service
 public class UserService {
