@@ -29,12 +29,22 @@ public class ExerciseSessionService {
 
         public Optional<ExerciseSession> getExerciseSessionById(Long id) {
         return exerciseSessionRepository.findById(id);
-
-    public List<ExerciseSession> getExerciseByDateTime(LocalDateTime dateTimeOFExercise) throws ExerciseSessionNotFoundException {
-        if (getExerciseByDateTime(null)){
+        }
+        public List<ExerciseSession> getExerciseByDateTime(LocalDateTime dateTimeOfExercise) throws ExerciseSessionNotFoundException {
+        if (exerciseSessionRepository.findByDateTimeofExercise(dateTimeOfExercise) == null){
             throw new ExerciseSessionNotFoundException("There is no exercise session under this date");
         }
 
-        return exerciseSessionRepository.findByDateTimeofExercise(dateTimeOFExercise);
+        return exerciseSessionRepository.findByDateTimeofExercise(dateTimeOfExercise);
+        }
+        
+        public class ExerciseSessionNotFoundException extends Exception {
+
+            public ExerciseSessionNotFoundException(String string) {
+                super(string);
+            }
+        }
     }
-}
+
+
+
