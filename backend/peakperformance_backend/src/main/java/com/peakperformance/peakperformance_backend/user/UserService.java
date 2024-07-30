@@ -37,6 +37,14 @@ public class UserService {
         userRepo.save(user);
     }
 
+
+    /*
+    * Returns whether password attempt is correct or not
+    */
+    public boolean isPasswordCorrect(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
     /*
      * Will try to find user by id, will return null if none found with id
      * will throw UserNotFoundException if is null
