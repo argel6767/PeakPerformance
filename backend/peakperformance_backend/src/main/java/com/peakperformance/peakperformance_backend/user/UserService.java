@@ -1,23 +1,41 @@
 package com.peakperformance.peakperformance_backend.user;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    //TODO RegisterUser and LoadUserByEmail once auth module finished
+
+    /*
+     * Checks email user wants to sign up with, if already taken, will throw an EmailAlreadyTakenException
+     * if not user will become registered
+     */
+    public void registerUser(UserRegisterRequest userRegisterRequest) throws EmailAlreadyTakenException {
+        Optional<User> userOptional = userRepo.findUserByEmail(userRegisterRequest.getEmail());
+        if (userOptional.isPresent()) {
+            throw new EmailAlreadyTakenException(userRegisterRequest.getEmail() + " is already taken by another user");
+        }
+
+        User user = new User();
+        user.setEmail(userRegisterRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
+        userRepo.save(user);
+    }
 
     /*
      * Will try to find user by id, will return null if none found with id
@@ -90,6 +108,13 @@ public class UserService {
 
     public List<Lift> getUserCurrentLiftsById(Long id) {
         return userRepo.getCurrentLiftsOfUserById(id);
+    }
+
+    private static class EmailAlreadyTakenException extends Exception {
+
+        public EmailAlreadyTakenException(String string) {
+            super(string);
+        }
     }
 
     /*
