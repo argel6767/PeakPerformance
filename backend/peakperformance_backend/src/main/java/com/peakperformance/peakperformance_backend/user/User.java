@@ -121,6 +121,11 @@ public class User implements UserDetails{
         this.weight = weight;
     }
 
+    public User(String email, String password) {
+        this.email = email;
+        this.password=password;
+    }
+
     public User() {
         //TODO Auto-generated constructor stub
     }

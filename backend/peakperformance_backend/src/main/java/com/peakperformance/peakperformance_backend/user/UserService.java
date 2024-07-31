@@ -3,6 +3,7 @@ package com.peakperformance.peakperformance_backend.user;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,15 +26,14 @@ public class UserService {
      * Checks email user wants to sign up with, if already taken, will throw an EmailAlreadyTakenException
      * if not user will become registered
      */
+    @Transactional
     public void registerUser(UserRegisterRequest userRegisterRequest) throws EmailAlreadyTakenException {
         Optional<User> userOptional = userRepo.findUserByEmail(userRegisterRequest.getEmail());
         if (userOptional.isPresent()) {
             throw new EmailAlreadyTakenException(userRegisterRequest.getEmail() + " is already taken by another user");
         }
 
-        User user = new User();
-        user.setEmail(userRegisterRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
+        User user = new User(userRegisterRequest.getEmail(), passwordEncoder.encode(userRegisterRequest.getPassword()));
         userRepo.save(user);
     }
 
@@ -118,7 +118,7 @@ public class UserService {
         return userRepo.getCurrentLiftsOfUserById(id);
     }
 
-    private static class EmailAlreadyTakenException extends Exception {
+    public static class EmailAlreadyTakenException extends Exception {
 
         public EmailAlreadyTakenException(String string) {
             super(string);
