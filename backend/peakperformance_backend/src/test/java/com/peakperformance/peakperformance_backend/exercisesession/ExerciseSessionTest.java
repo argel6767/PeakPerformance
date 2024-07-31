@@ -1,4 +1,4 @@
-package com.peakperformace.peakperformance_backend.exercisesession;
+package com.peakperformance.peakperformance_backend.exercisesession;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.peakperformance.peakperformance_backend.exercise.Exercise;
 import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 import com.peakperformance.peakperformance_backend.exercise.model.WorkoutType;
-import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
+import com.peakperformance.peakperformance_backend.user.User;
 
 public class ExerciseSessionTest {
     

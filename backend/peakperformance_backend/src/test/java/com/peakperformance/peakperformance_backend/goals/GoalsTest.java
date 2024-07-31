@@ -1,14 +1,13 @@
-package com.peakperformace.peakperformance_backend.goals;
+package com.peakperformance.peakperformance_backend.goals;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 
-import com.peakperformance.peakperformance_backend.exercise.model.*;
-import com.peakperformance.peakperformance_backend.goals.Goals;
+import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 
 public class GoalsTest {
 

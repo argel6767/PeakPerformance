@@ -1,24 +1,12 @@
-package com.peakperformace.peakperformance_backend.user;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.Optional;
+package com.peakperformance.peakperformance_backend.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import com.peakperformance.peakperformance_backend.user.User;
-import com.peakperformance.peakperformance_backend.user.UserRepository;
-import com.peakperformance.peakperformance_backend.user.UserService;
-import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
 
 //TODO FINSIH THESE ONCE ExerciseSession is merged!!!!!
 @ExtendWith(MockitoExtension.class)

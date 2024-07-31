@@ -1,4 +1,4 @@
-package com.peakperformace.peakperformance_backend.user;
+package com.peakperformance.peakperformance_backend.user;
 
 import org.junit.jupiter.api.Test;
 

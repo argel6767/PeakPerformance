@@ -1,19 +1,17 @@
-package com.peakperformace.peakperformance_backend.converter;
+package com.peakperformance.peakperformance_backend.converter;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
-import com.peakperformance.peakperformance_backend.exercise.model.Lift;
-import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 
 
 public class JSONBConverterTest {
