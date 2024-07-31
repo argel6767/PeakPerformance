@@ -1,41 +1,40 @@
 package com.peakperformance.peakperformance_backend.exercisesession;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.peakperformace.peakperformance_backend.exercise.Exercise;
+import com.peakperformance.peakperformance_backend.exercise.Exercise;
 
 @Service
 public class ExerciseSessionService {
 
     private final ExerciseSessionRepository exerciseSessionRepository;
 
-    @Autowired
     public ExerciseSessionService(ExerciseSessionRepository exerciseSessionRepository) {
         this.exerciseSessionRepository = exerciseSessionRepository;
     }
 
-    public List<ExerciseSession> getAllExerciseSessions() {
-        return exerciseSessionRepository.findAll();
-    }
-
-    public ExerciseSession getExerciseSessionByExercise(Exercise exercise) {
+    public ExerciseSession getExerciseSessionByExercise(Exercise exercise) throws ExerciseSessionNotFoundException {
+        if (exerciseSessionRepository.findByExercise(exercise) == null){
+            throw new ExerciseSessionNotFoundException("There is no exercise session doing this exercise");
+        }
         return exerciseSessionRepository.findByExercise(exercise);
     }
 
-        public Optional<ExerciseSession> getExerciseSessionById(Long id) {
-        return exerciseSessionRepository.findById(id);
 
-    public List<ExerciseSession> getExerciseByDateTime(LocalDateTime dateTimeOFExercise)  {
-        if (getExerciseByDateTime(null)){
+    public ExerciseSession getExerciseSessionByDateTime(LocalDateTime dateTimeOfExerciseSession) throws ExerciseSessionNotFoundException {
+        if (exerciseSessionRepository.findByDateTimeofExerciseSession(dateTimeOfExerciseSession) == null){
             throw new ExerciseSessionNotFoundException("There is no exercise session under this date");
         }
 
-        return exerciseSessionRepository.findByDateTimeofExercise(dateTimeOFExercise);
+    return exerciseSessionRepository.findByDateTimeofExerciseSession(dateTimeOfExerciseSession);
     }
-}
-}
+        
+    public class ExerciseSessionNotFoundException extends Exception {
+
+        public ExerciseSessionNotFoundException(String string) {
+            super(string);
+            }
+        }
+    }
