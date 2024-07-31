@@ -7,10 +7,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import com.peakperformace.peakperformance_backend.exercise.Exercise;
-import com.peakperformace.peakperformance_backend.exercise.model.WeightReps;
-import com.peakperformace.peakperformance_backend.exercise.model.WorkoutType;
-import com.peakperformace.peakperformance_backend.user.User;
+import com.peakperformance.peakperformance_backend.exercise.Exercise;
+import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
+import com.peakperformance.peakperformance_backend.exercise.model.WorkoutType;
+import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
 
 public class ExerciseSessionTest {
     

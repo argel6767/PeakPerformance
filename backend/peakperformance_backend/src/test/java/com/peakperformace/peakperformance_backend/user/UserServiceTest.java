@@ -15,7 +15,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.peakperformace.peakperformance_backend.user.UserService.UserNotFoundException;
+import com.peakperformance.peakperformance_backend.user.User;
+import com.peakperformance.peakperformance_backend.user.UserRepository;
+import com.peakperformance.peakperformance_backend.user.UserService;
+import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
 
 //TODO FINSIH THESE ONCE ExerciseSession is merged!!!!!
 @ExtendWith(MockitoExtension.class)
