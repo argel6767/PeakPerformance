@@ -3,9 +3,14 @@ package com.peakperformance.peakperformance_backend.user;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Collections;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
@@ -27,7 +32,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_account")
-public class User {
+public class User implements UserDetails{
     @Id
     @SequenceGenerator (
         name = "user_sequence",
@@ -214,6 +219,17 @@ public class User {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", dob="
                 + dob + ", password=" + password + ", height=" + height + ", weight=" + weight + ", currentLifts="
                 + currentLifts + ", goals=" + goals + ", createdAt=" + createdAt + "]";
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+
+    @Override
+    public String getUsername() {
+        return email;
     }
     
 }
