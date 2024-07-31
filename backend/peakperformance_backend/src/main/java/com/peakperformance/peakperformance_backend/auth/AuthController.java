@@ -30,7 +30,7 @@ public class AuthController {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
         try { //checks if loginRequest email is attached to user
-            User user = userService.getUserByEmail(email);
+            UserDetails user = userService.getUserByEmail(email);
             if (userService.isPasswordCorrect(password, user.getPassword())) { //verfies password
                 return tokenService.generateToken((Authentication) user);
             }
