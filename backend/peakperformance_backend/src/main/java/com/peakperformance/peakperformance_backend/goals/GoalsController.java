@@ -17,7 +17,7 @@ import com.peakperformance.peakperformance_backend.user.User;
 
 
 @RestController
-@RequestMapping("/goals/")
+@RequestMapping("/goals")
 public class GoalsController {
 
     private final GoalsService goalsService;
@@ -26,28 +26,28 @@ public class GoalsController {
         this.goalsService = goalsService;
     }
 
-    @GetMapping(path ="{goalId}")
+    @GetMapping("/{goalId}")
     public Goals getGoalById(@PathVariable("goalId") Long id) throws GoalNotFoundException {
         return goalsService.getGoalById(id);
     }
 
-    @GetMapping(path = "{goalId}/user")
+    @GetMapping("/{goalId}/user")
     public User getUserAttchedToGoalById(@PathVariable("goalId") Long id) throws GoalNotFoundException{
         return goalsService.getUserAttachedToGoalById(id);
     }
 
-    @GetMapping("{goalId}/liftingGoals")
+    @GetMapping("/{goalId}/liftingGoals")
     public List<Lift> getMethodName(@PathVariable("goalId") Long id) throws GoalNotFoundException{
         return goalsService.getGoalLiftsById(id);
     }
 
 
-    @PutMapping("{goalId}/addlift")
+    @PutMapping("/{goalId}/addlift")
     public void addAGoalLiftById(@PathVariable("goalId") Long id, @RequestBody Lift newLiftGoal) throws GoalNotFoundException {
         goalsService.addAGoalLiftById(id, newLiftGoal);
     }
 
-    @PutMapping("{goalId}/addlifts")
+    @PutMapping("/{goalId}/addlifts")
     public void updateGoalLiftsById(@PathVariable("goalId") Long id, @RequestBody List<Lift> liftingGoals) throws GoalNotFoundException {
         goalsService.updateGoalLiftsById(id, liftingGoals);        
     }
