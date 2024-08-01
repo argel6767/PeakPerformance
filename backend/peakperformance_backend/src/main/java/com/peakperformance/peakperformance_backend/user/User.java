@@ -8,9 +8,18 @@ import java.util.List;
 import java.util.Collections;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
+import org.hibernate.dialect.PostgreSQLJsonPGObjectJsonbType;
+
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+
+import org.hibernate.usertype.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
@@ -53,12 +62,13 @@ public class User implements UserDetails{
     private Integer height;
     private Integer weight;
     
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", nullable = true)
     @Convert(converter = JSONBConverter.class)
+    @Type(JsonType.class)
     private List<Lift> currentLifts;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "goals_id", referencedColumnName = "id") // This is the foreign key in the User table referencing Goals
+    @JoinColumn(name = "goals_id", referencedColumnName = "id", nullable = true)// This is the foreign key in the User table referencing Goals
     private Goals goals; //will be null if no goals are given
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -119,6 +129,8 @@ public class User implements UserDetails{
         this.dob = dob;
         this.height = height;
         this.weight = weight;
+        this.currentLifts = null;
+        this.goals = null;
     }
 
     public User(String email, String password) {

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.postgresql.util.PGobject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
@@ -18,7 +19,7 @@ public class JSONBConverterTest {
 
     private JSONBConverter converter;
     private String jsonb;
-    private String jsonResponse;
+    private Object jsonResponse;
     private List<Lift> lifts;
     private String expectedToString;
 

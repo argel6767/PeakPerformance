@@ -12,7 +12,7 @@ import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import java.util.List;
 
 
-@Converter
+@Converter(autoApply = true)
 public class JSONBConverter implements AttributeConverter<List<Lift>, String> {
 
     private final ObjectMapper objectMapper;
@@ -23,28 +23,23 @@ public class JSONBConverter implements AttributeConverter<List<Lift>, String> {
 
     @Override
     public String convertToDatabaseColumn(List<Lift> liftList) {
-        String liftJson = null; //declare and inializes the liftJson
         try {
-            liftJson = objectMapper.writeValueAsString(liftList);
+            String liftJson = objectMapper.writeValueAsString(liftList);
             return liftJson; //return JSON of lift list
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            return null;
         }
-        return liftJson; //if fails will return null
     }
 
     @Override
     public List<Lift> convertToEntityAttribute(String dbData) {
-        List<Lift> liftList = null; //declare and intialze liftlist
         try {
-            liftList = objectMapper.readValue(dbData, new TypeReference<List<Lift>>(){}); //try objectmapping
-            return liftList;
+            return  objectMapper.readValue(dbData, new TypeReference<List<Lift>>() {});
         } catch (JsonMappingException e) {
-            e.printStackTrace();
+            throw new RuntimeException();
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new RuntimeException();
         }
-        return liftList; //if some reason fails will return null
     }
 
 }

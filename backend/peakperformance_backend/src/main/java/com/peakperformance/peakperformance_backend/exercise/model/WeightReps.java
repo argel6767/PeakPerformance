@@ -1,5 +1,8 @@
 package com.peakperformance.peakperformance_backend.exercise.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /*
  * The weight and reps done for a single set
  */
@@ -10,7 +13,9 @@ public class WeightReps {
 
     public WeightReps(){}
 
-    public WeightReps(int weight, int reps) {
+    @JsonCreator
+    public WeightReps(@JsonProperty("weight") int weight,
+                      @JsonProperty("reps") int reps) {
         this.weight = weight;
         this.reps = reps;
     }

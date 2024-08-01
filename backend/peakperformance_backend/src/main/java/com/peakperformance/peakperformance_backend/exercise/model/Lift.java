@@ -1,6 +1,10 @@
 package com.peakperformance.peakperformance_backend.exercise.model;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 
@@ -21,7 +25,9 @@ public class Lift {
         this.sets.add(new WeightReps(weight, reps));
     }
 
-    public Lift(String exerciseName, List<WeightReps> sets) {
+    @JsonCreator
+    public Lift(@JsonProperty("exerciseName") String exerciseName,
+                @JsonProperty("sets") List<WeightReps> sets) {
         this.exerciseName = exerciseName;
         this.sets = sets;
     }

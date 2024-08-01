@@ -1,6 +1,13 @@
 package com.peakperformance.peakperformance_backend.auth;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,43 +28,51 @@ import com.peakperformance.peakperformance_backend.user.UserService.EmailAlready
 public class AuthController {
 
     private final TokenService tokenService;
-    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private UserService userService;
 
-    public AuthController(TokenService tokenService, UserService userService) {
+
+    public AuthController(TokenService tokenService, UserService userService, AuthenticationManager authenticationManager) {
         this.tokenService = tokenService;
+        this.authenticationManager = authenticationManager;
         this.userService = userService;
     }
 
     @PostMapping("/login")
     public String userLoginRequest(@RequestBody LoginRequest loginRequest) {
-        String email = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
-        try { //checks if loginRequest email is attached to user in db
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-            UserDetails user = userService.getUserByEmail(email);
-            if (userService.isPasswordCorrect(password, user.getPassword())) { //verfies password
-                return tokenService.generateToken((Authentication) user);
-            }
-            return "Password incorrect!";
-        }
-        catch (UserNotFoundException unfe) { //exeption thrown if no user has email
-            return "User with email " + loginRequest.getEmail() + " does not exist!";
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            return tokenService.generateToken(authentication);
+        } catch (BadCredentialsException e) {
+            return "Incorrect Email or Password";
         }
     }
 
     @PostMapping("/register")
     public String registerNewUser(@RequestBody UserRegisterRequest userRegisterRequest) {
-        String email = userRegisterRequest.getEmail();
-        String password = userRegisterRequest.getPassword();
-        try { //trys to register user with email and password details
-            userService.registerUser(userRegisterRequest);
-            UserDetails user = new User(email, password);
-            return tokenService.generateToken((Authentication) user); //returns a token if user is sucessfullt registered
-        }
-        catch (EmailAlreadyTakenException eate) { //throws exception is email has already been used by another user
-            return "Email " + email + " is already taken";
+
+      try { userService.registerUser(userRegisterRequest);
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                    userRegisterRequest.getEmail(),
+                    userRegisterRequest.getPassword()
+            )
+    );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        return tokenService.generateToken(authentication);}
+        catch(EmailAlreadyTakenException eate) {
+            return "Email: " + userRegisterRequest.getEmail() + " is already taken.";
         }
     }
+
     
     
 }
