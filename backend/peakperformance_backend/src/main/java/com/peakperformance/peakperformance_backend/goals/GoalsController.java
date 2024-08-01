@@ -2,12 +2,12 @@ package com.peakperformance.peakperformance_backend.goals;
 
 import java.util.List;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.goals.GoalsService.GoalNotFoundException;
@@ -16,7 +16,7 @@ import com.peakperformance.peakperformance_backend.user.User;
 
 
 
-@Controller
+@RestController
 @RequestMapping("/goals/")
 public class GoalsController {
 
