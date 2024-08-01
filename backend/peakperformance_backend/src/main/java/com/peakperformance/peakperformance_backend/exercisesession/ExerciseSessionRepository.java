@@ -13,7 +13,7 @@ import com.peakperformance.peakperformance_backend.user.User;
 public interface ExerciseSessionRepository extends JpaRepository<ExerciseSession, LocalDateTime> {
 
     //finds an exercise session by datetime
-    @Query("SELECT es FROM ExerciseSession es WHERE es.date_performed = :dateTimeOfExerciseSession")
+    @Query("SELECT es FROM ExerciseSession es WHERE es.dateTimeofExercise = :dateTimeOfExerciseSession")
     public ExerciseSession findByDateTimeofExerciseSession(LocalDateTime dateTimeOfExerciseSession);
 
     //finds an exercise session by exercise

@@ -36,7 +36,8 @@ public class Goals {
 
     private Long id;
     private Integer weightGoal;
-    @Column(columnDefinition = "jsonb")
+    
+    @Column(columnDefinition = "jsonb", nullable = true)
     @Convert(converter = JSONBConverter.class) 
     private List<Lift> liftGoals;
 
