@@ -3,14 +3,14 @@ package com.peakperformance.peakperformance_backend.user;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 
@@ -85,6 +85,7 @@ public class UserService implements UserDetailsService{
         return userRepo.findAll();
     }
 
+    @Transactional
     //can be used for either updating a users weight or if the didnt put one originally
     public void updateWeightOfUserById(Long id, Integer weight) {
         userRepo.changeWeightOfUserById(id, weight);
@@ -94,11 +95,13 @@ public class UserService implements UserDetailsService{
         return userRepo.getWeightOfUserById(id);
     }
 
+    @Transactional
     //can be used for either updating a users current lifts or if they didnt put any originally
     public void updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) {
         userRepo.changeCurrentLiftsOfUserById(id, currentLifts);
     }
 
+    @Transactional
     //add more lifts to an already made list or make current lifts lists if null
     public void addLiftToUserCurrentLiftsById(Long id, Lift lift) throws UserNotFoundException {
         Optional<User> userOptional = userRepo.findById(id);
