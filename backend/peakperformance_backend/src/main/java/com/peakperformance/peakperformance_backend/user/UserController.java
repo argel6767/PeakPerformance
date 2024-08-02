@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/addlift")
-    public void addLiftToCurrentLiftsById(@PathVariable Long id, @RequestBody Lift lift) throws UserNotFoundException {
+    public void addLiftToCurrentLiftsById(@PathVariable("userId") Long id, @RequestBody Lift lift) throws UserNotFoundException {
         userService.addLiftToUserCurrentLiftsById(id, lift);
     }
     
