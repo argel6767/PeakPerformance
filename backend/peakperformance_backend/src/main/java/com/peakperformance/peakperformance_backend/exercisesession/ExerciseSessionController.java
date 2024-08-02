@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.peakperformance.peakperformance_backend.exercise.Exercise;
 import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSessionService.ExerciseSessionNotFoundException;
 
 @Controller
@@ -24,10 +23,10 @@ public class ExerciseSessionController {
         LocalDateTime localDateTime = LocalDateTime.parse(dateTime);
         return exerciseSessionService.getExerciseSessionByDateTime(localDateTime);
     }
-
+    /* 
     @GetMapping("exercisesession/byExercise")
     public ExerciseSession getExerciseSessionByExercise(@RequestParam("exerciseId") Long exerciseId) throws ExerciseSessionNotFoundException {
         Exercise exercise = exerciseService.getExerciseById(exerciseId);
         return exerciseSessionService.getExerciseSessionByExercise(exercise);
-    }
+    }*/
 }

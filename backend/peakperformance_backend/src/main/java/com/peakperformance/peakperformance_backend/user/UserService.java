@@ -120,9 +120,9 @@ public class UserService implements UserDetailsService{
         //if user didnt add current lifts originally
         if (currentLifts == null) {
             currentLifts = new ArrayList<>();
+            user.setCurrentLifts(currentLifts);
         }
         currentLifts.add(lift);
-        user.setCurrentLifts(currentLifts);
         userRepo.save(user);
     }
 
