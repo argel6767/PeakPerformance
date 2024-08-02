@@ -1,11 +1,10 @@
 package com.peakperformance.peakperformance_backend.user;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
-
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -58,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/currentLifts")
-    public void updateCurrentLiftsOfUserById(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) {
+    public void updateCurrentLiftsOfUserById(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) throws UserNotFoundException {
         userService.updateCurrentLiftsOfUserById(id, currentLifts);
     }
 

@@ -97,8 +97,14 @@ public class UserService implements UserDetailsService{
 
     @Transactional
     //can be used for either updating a users current lifts or if they didnt put any originally
-    public void updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) {
-        userRepo.changeCurrentLiftsOfUserById(id, currentLifts);
+    public void updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) throws UserNotFoundException {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(id + " not attached to any user");
+        }
+        User user = userOptional.get();
+        user.setCurrentLifts(currentLifts);
+        userRepo.save(user);
     }
 
     @Transactional
