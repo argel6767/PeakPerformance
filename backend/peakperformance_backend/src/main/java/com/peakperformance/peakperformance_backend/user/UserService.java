@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.goals.Goals;
 
 @Service
 public class UserService implements UserDetailsService{
@@ -123,6 +124,18 @@ public class UserService implements UserDetailsService{
             user.setCurrentLifts(currentLifts);
         }
         currentLifts.add(lift);
+        userRepo.save(user);
+    }
+
+    @Transactional
+    //update goals or put goals if not were originall given
+    public void addGoalsToUserById(Long id, Goals goal) throws UserNotFoundException {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(id + " not attached to any user");
+        }
+        User user = userOptional.get();
+        user.setGoals(goal);
         userRepo.save(user);
     }
 

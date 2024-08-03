@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.goals.Goals;
 import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 
 @RestController
@@ -63,5 +66,9 @@ public class UserController {
     public void addLiftToCurrentLiftsById(@PathVariable("userId") Long id, @RequestBody Lift lift) throws UserNotFoundException {
         userService.addLiftToUserCurrentLiftsById(id, lift);
     }
-    
+
+    @PutMapping("/{userId}/addGoal")
+    public void updateGoalsById(@PathVariable("userId") Long id, @RequestBody Goals goal) throws UserNotFoundException {        
+        userService.addGoalsToUserById(id, goal);
+    }
 }

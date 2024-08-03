@@ -20,7 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
@@ -68,6 +68,7 @@ public class User implements UserDetails{
     private List<Lift> currentLifts;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonManagedReference
     @JoinColumn(name = "goals_id", referencedColumnName = "id", nullable = true)// This is the foreign key in the User table referencing Goals
     private Goals goals; //will be null if no goals are given
 
