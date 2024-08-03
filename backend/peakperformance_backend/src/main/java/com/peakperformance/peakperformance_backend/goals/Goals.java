@@ -11,9 +11,14 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.List;
 
+import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.user.User;
+
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 
 @Entity
 @Table
@@ -38,10 +43,12 @@ public class Goals {
     private Integer weightGoal;
     
     @Column(columnDefinition = "jsonb", nullable = true)
-    @Convert(converter = JSONBConverter.class) 
+    @Convert(converter = JSONBConverter.class)
+    @Type(JsonType.class) 
     private List<Lift> liftGoals;
 
     @OneToOne(mappedBy = "goals")
+    @JsonBackReference
     private User user;
     
     public User getUser() {
