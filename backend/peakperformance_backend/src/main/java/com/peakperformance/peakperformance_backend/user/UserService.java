@@ -129,7 +129,7 @@ public class UserService implements UserDetailsService{
 
     @Transactional
     //update goals or put goals if not were originall given
-    public void addGoalsGoalsToUserById(Long id, Goals goal) throws UserNotFoundException {
+    public void addGoalsToUserById(Long id, Goals goal) throws UserNotFoundException {
         Optional<User> userOptional = userRepo.findById(id);
         if (!userOptional.isPresent()) {
             throw new UserNotFoundException(id + " not attached to any user");

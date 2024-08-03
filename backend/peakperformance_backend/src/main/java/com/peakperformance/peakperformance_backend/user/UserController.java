@@ -69,8 +69,6 @@ public class UserController {
 
     @PutMapping("/{userId}/addGoal")
     public void updateGoalsById(@PathVariable("userId") Long id, @RequestBody Goals goal) throws UserNotFoundException {        
-        userService.addGoalsGoalsToUserById(id, goal);
+        userService.addGoalsToUserById(id, goal);
     }
-    
-    
 }
