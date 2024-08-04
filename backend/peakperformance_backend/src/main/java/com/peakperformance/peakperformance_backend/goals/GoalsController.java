@@ -28,8 +28,13 @@ public class GoalsController {
     }
 
     @GetMapping("/{goalId}")
-    public Goals getGoalById(@PathVariable("goalId") Long id) throws GoalNotFoundException {
-        return goalsService.getGoalById(id);
+    public Goals getGoalById(@PathVariable("goalId") Long id) {
+        try{
+            return goalsService.getGoalById(id);
+        }
+        catch(GoalNotFoundException gnfe) {
+            return null;
+        }
     }
 
     @GetMapping("/allgoals")
@@ -39,28 +44,56 @@ public class GoalsController {
     
 
     @GetMapping("/{goalId}/user")
-    public User getUserAttchedToGoalById(@PathVariable("goalId") Long id) throws GoalNotFoundException{
-        return goalsService.getUserAttachedToGoalById(id);
+    public User getUserAttchedToGoalById(@PathVariable("goalId") Long id) {
+        try{
+            return goalsService.getUserAttachedToGoalById(id);
+        }
+        catch(GoalNotFoundException gnfe) {
+            return null;
+        }
     }
 
     @GetMapping("/{goalId}/liftingGoals")
-    public List<Lift> getLiftingGoalsById(@PathVariable("goalId") Long id) throws GoalNotFoundException{
-        return goalsService.getGoalLiftsById(id);
+    public List<Lift> getLiftingGoalsById(@PathVariable("goalId") Long id) {
+         try{
+            return goalsService.getGoalLiftsById(id);
+        }
+        catch(GoalNotFoundException gnfe) {
+            return null;
+        }
     }
 
     @PutMapping("/{goalId}/weight")
-    public void updateGoalWeight(@PathVariable("goalId") Long id, @RequestBody Integer weightGoal) throws GoalNotFoundException {
-        goalsService.updateGoalWeightById(id, weightGoal);
+    public String updateGoalWeight(@PathVariable("goalId") Long id, @RequestBody Integer weightGoal) {
+        try{
+            goalsService.updateGoalWeightById(id, weightGoal);
+            return "Sucess!";
+        }
+        catch(GoalNotFoundException gnfe) {
+            return "id: " + id + " does not belong to any goal";
+        }
     }
 
     @PutMapping("/{goalId}/addlift")
-    public void addAGoalLiftById(@PathVariable("goalId") Long id, @RequestBody Lift newLiftGoal) throws GoalNotFoundException {
-        goalsService.addAGoalLiftById(id, newLiftGoal);
+    public String addAGoalLiftById(@PathVariable("goalId") Long id, @RequestBody Lift newLiftGoal) {
+        try{
+            goalsService.addAGoalLiftById(id, newLiftGoal);
+            return "Sucess!";
+        }
+        catch(GoalNotFoundException gnfe) {
+            return "id: " + id + " does not belong to any goal";
+        }
     }
 
     @PutMapping("/{goalId}/addlifts")
-    public void updateGoalLiftsById(@PathVariable("goalId") Long id, @RequestBody List<Lift> liftingGoals) throws GoalNotFoundException {
-        goalsService.updateGoalLiftsById(id, liftingGoals);        
+    public String updateGoalLiftsById(@PathVariable("goalId") Long id, @RequestBody List<Lift> liftingGoals) throws GoalNotFoundException {
+        try{
+            goalsService.updateGoalLiftsById(id, liftingGoals);
+            return "Sucess!";
+        }
+        catch(GoalNotFoundException gnfe) {
+            return "id: " + id + " does not belong to any goal";
+        }      
     }
     
     
