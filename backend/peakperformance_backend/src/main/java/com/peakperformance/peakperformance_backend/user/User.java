@@ -4,15 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-
-
-import io.hypersistence.utils.hibernate.type.json.JsonType;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +19,7 @@ import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
 import com.peakperformance.peakperformance_backend.goals.Goals;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -67,7 +64,7 @@ public class User implements UserDetails{
     @OneToOne(cascade = CascadeType.ALL)
     @JsonManagedReference
     @JoinColumn(name = "goals_id", referencedColumnName = "id", nullable = true)// This is the foreign key in the User table referencing Goals
-    private Goals goals; //will be null if no goals are given
+    private Goals goals = new Goals(); //will be null if no goals are given
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseSession> exerciseSessions = new ArrayList<>(); 
@@ -114,7 +111,6 @@ public class User implements UserDetails{
         this.height = height;
         this.weight = weight;
         this.currentLifts = currentLifts;
-        this.goals = new Goals();
     }
 
     //no current lifts or goals given
@@ -128,7 +124,6 @@ public class User implements UserDetails{
         this.height = height;
         this.weight = weight;
         this.currentLifts = null;
-        this.goals = null;
     }
 
     public User(String email, String password) {
