@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.goals.Goals;
 import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
 
 
 
@@ -48,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/weight")
-    public void updateWeightOfUserById(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
+    public void addWeightOfUserById(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
         userService.updateWeightOfUserById(id, weight);
     }
 
@@ -57,8 +56,8 @@ public class UserController {
         return userService.getUserWeightById(id);
     }
 
-    @PutMapping("/{userId}/currentLifts")
-    public void updateCurrentLiftsOfUserById(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) throws UserNotFoundException {
+    @PutMapping("/{userId}/currentlifts")
+    public void addCurrentLiftsOfUserById(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) throws UserNotFoundException {
         userService.updateCurrentLiftsOfUserById(id, currentLifts);
     }
 
@@ -67,8 +66,13 @@ public class UserController {
         userService.addLiftToUserCurrentLiftsById(id, lift);
     }
 
-    @PutMapping("/{userId}/addGoal")
-    public void updateGoalsById(@PathVariable("userId") Long id, @RequestBody Goals goal) throws UserNotFoundException {        
+    @PutMapping("/{userId}/addgoal")
+    public void addGoalsById(@PathVariable("userId") Long id, @RequestBody Goals goal) throws UserNotFoundException {        
         userService.addGoalsToUserById(id, goal);
+    }
+
+    @PutMapping("{userId}/adddetails")
+    public void addUserDetailsById(@PathVariable("userId") Long id, @RequestBody User userDetails) throws UserNotFoundException {
+        userService.addUserDetailsById(id, userDetails);
     }
 }

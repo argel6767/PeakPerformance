@@ -150,24 +150,6 @@ public class UserService implements UserDetailsService{
         }
     }
 
-    /*
-     * Exception that is thrown when a query looking for a User returns null, meaning they do not exist
-     */
-    public class UserNotFoundException extends Exception {
-
-        public UserNotFoundException(String string) {
-            super(string);
-        }
-        
-    }
-
-    public class InvalidPasswordException extends Exception {
-
-        public InvalidPasswordException(String string) {
-            super(string);
-        }
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepo.findUserByEmail(username);
@@ -179,5 +161,53 @@ public class UserService implements UserDetailsService{
         return user;        
     }
 
+    /*
+     * Allows for the rest of the user details to be saved in the db
+     */
+    @Transactional
+    public void addUserDetailsById(Long id, User userDetails) throws UserNotFoundException {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(id + " not attached to any user");
+        }
+        User user = userOptional.get();
+        updateUserDeatils(user, userDetails);
+        user.getGoals().setLiftGoals(userDetails.getGoals().getLiftGoals());
+        user.getGoals().setWeightGoal(userDetails.getGoals().getWeightGoal());
+        userRepo.save(user);
+    }
+
+    /*
+     * Maps all values into the User object in the db
+     */
+    private void updateUserDeatils(User user, User userDetails) {
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setCurrentLifts(userDetails.getCurrentLifts());
+        user.setHeight(userDetails.getHeight());
+        user.setWeight(userDetails.getWeight());
+        user.setDob(userDetails.getDob());
+        
+    }
+
+    /*
+     * Exception that is thrown when a query looking for a User returns null, meaning they do not exist
+     */
+    public class UserNotFoundException extends Exception {
+
+        public UserNotFoundException(String string) {
+            super(string);
+        }
+        
+    }
+    /*
+     * Exception that is thrown when the password entered is wrong, when a user tries to log in
+     */
+    public class InvalidPasswordException extends Exception {
+
+        public InvalidPasswordException(String string) {
+            super(string);
+        }
+    }
 
 }

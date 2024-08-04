@@ -9,13 +9,10 @@ import java.util.Collections;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-import org.hibernate.dialect.PostgreSQLJsonPGObjectJsonbType;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 
-import org.hibernate.usertype.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
