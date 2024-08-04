@@ -27,28 +27,40 @@ public class UserController {
     }
 
     @GetMapping("/id/{userId}")
-    public User getUserById(@PathVariable("userId") Long id) throws UserNotFoundException {
-        return userService.getUserById(id);
+    public User getUserById(@PathVariable("userId") Long id) {
+        try {
+            return userService.getUserById(id);
+        }
+        catch (UserNotFoundException unfe) {
+            return null;
+        }
     }
 
     @GetMapping("/email/{email}")
     public User getUserByEmail(@PathVariable("email") String email) throws UserNotFoundException {
-        return userService.getUserByEmail(email);    
+        try {
+            return userService.getUserByEmail(email);
+        }
+        catch (UserNotFoundException unfe) {
+            return null;
+        }  
     }
 
     @DeleteMapping("/delete/{userId}")
-    public void deleteUserById(@PathVariable("userId") Long id) {
-        userService.deleteUserById(id);
+    public String deleteUserById(@PathVariable("userId") Long id) {
+            userService.deleteUserById(id);
+            return "Success!";
     }
-
+    
     @GetMapping("/allusers")
     public List<User> getUsers() {
         return userService.getAllUsers();
     }
 
     @PutMapping("/{userId}/weight")
-    public void addWeightOfUserById(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
-        userService.updateWeightOfUserById(id, weight);
+    public String addWeightOfUserById(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
+            userService.updateWeightOfUserById(id, weight);
+            return "Sucess!";
     }
 
     @GetMapping("/{userId}/weight")
@@ -57,22 +69,46 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/currentlifts")
-    public void addCurrentLiftsOfUserById(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) throws UserNotFoundException {
-        userService.updateCurrentLiftsOfUserById(id, currentLifts);
+    public String addCurrentLiftsOfUserById(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) {
+        try {
+            userService.updateCurrentLiftsOfUserById(id, currentLifts);
+            return "Success!";
+        }
+        catch (UserNotFoundException unfe) {
+            return "No user found with id " + id;
+        }
     }
 
     @PutMapping("/{userId}/addlift")
-    public void addLiftToCurrentLiftsById(@PathVariable("userId") Long id, @RequestBody Lift lift) throws UserNotFoundException {
-        userService.addLiftToUserCurrentLiftsById(id, lift);
+    public String addLiftToCurrentLiftsById(@PathVariable("userId") Long id, @RequestBody Lift lift) {
+        try {
+            userService.addLiftToUserCurrentLiftsById(id, lift);
+            return "Success!";
+        }
+        catch (UserNotFoundException unfe) {
+            return "No user found with id " + id;
+        }
     }
 
     @PutMapping("/{userId}/addgoal")
-    public void addGoalsById(@PathVariable("userId") Long id, @RequestBody Goals goal) throws UserNotFoundException {        
-        userService.addGoalsToUserById(id, goal);
+    public String addGoalsById(@PathVariable("userId") Long id, @RequestBody Goals goal) {        
+        try {
+            userService.addGoalsToUserById(id, goal);
+            return "Success!";
+        }
+        catch (UserNotFoundException unfe) {
+            return "No user found with id " + id;
+        }
     }
 
     @PutMapping("{userId}/adddetails")
-    public void addUserDetailsById(@PathVariable("userId") Long id, @RequestBody User userDetails) throws UserNotFoundException {
-        userService.addUserDetailsById(id, userDetails);
+    public String addUserDetailsById(@PathVariable("userId") Long id, @RequestBody User userDetails) {
+        try {
+            userService.addUserDetailsById(id, userDetails);
+            return "Success!";
+        }
+        catch (UserNotFoundException unfe) {
+            return "No user found with id " + id;
+        }
     }
 }
