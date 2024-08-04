@@ -91,6 +91,22 @@ public class GoalsService {
         goalsRepo.save(goal);
     }
 
+    List<Goals> getAllGoals() {
+        return goalsRepo.findAll();
+    }
+
+    void updateGoalWeightById(Long id, Integer weightGoal) throws GoalNotFoundException {
+        Optional<Goals> goalOptional = goalsRepo.findById(id);
+
+        if (!goalOptional.isPresent()) {
+            throw new GoalNotFoundException();
+        }
+
+        Goals goal = goalOptional.get();
+        goal.setWeightGoal(weightGoal);
+        goalsRepo.save(goal);
+    }
+
 
     public class GoalNotFoundException extends Exception {
 

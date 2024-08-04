@@ -172,9 +172,15 @@ public class UserService implements UserDetailsService{
         }
         User user = userOptional.get();
         updateUserDeatils(user, userDetails);
+        if (userDetails.getGoals() != null) {
+          updateGoals(user, userDetails);       
+        }
+        userRepo.save(user);
+    }
+
+    private void updateGoals(User user, User userDetails) {
         user.getGoals().setLiftGoals(userDetails.getGoals().getLiftGoals());
         user.getGoals().setWeightGoal(userDetails.getGoals().getWeightGoal());
-        userRepo.save(user);
     }
 
     /*

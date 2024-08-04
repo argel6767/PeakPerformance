@@ -16,6 +16,7 @@ import com.peakperformance.peakperformance_backend.user.User;
 
 
 
+
 @RestController
 @RequestMapping("/goals")
 public class GoalsController {
@@ -31,16 +32,26 @@ public class GoalsController {
         return goalsService.getGoalById(id);
     }
 
+    @GetMapping("/allgoals")
+    public List<Goals> getAllGoals() {
+        return goalsService.getAllGoals();
+    }
+    
+
     @GetMapping("/{goalId}/user")
     public User getUserAttchedToGoalById(@PathVariable("goalId") Long id) throws GoalNotFoundException{
         return goalsService.getUserAttachedToGoalById(id);
     }
 
     @GetMapping("/{goalId}/liftingGoals")
-    public List<Lift> getMethodName(@PathVariable("goalId") Long id) throws GoalNotFoundException{
+    public List<Lift> getLiftingGoalsById(@PathVariable("goalId") Long id) throws GoalNotFoundException{
         return goalsService.getGoalLiftsById(id);
     }
 
+    @PutMapping("/{goalId}/weight")
+    public void updateGoalWeight(@PathVariable("goalId") Long id, @RequestBody Integer weightGoal) throws GoalNotFoundException {
+        goalsService.updateGoalWeightById(id, weightGoal);
+    }
 
     @PutMapping("/{goalId}/addlift")
     public void addAGoalLiftById(@PathVariable("goalId") Long id, @RequestBody Lift newLiftGoal) throws GoalNotFoundException {
