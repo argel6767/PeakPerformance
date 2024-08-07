@@ -3,6 +3,7 @@ package com.peakperformance.peakperformance_backend.exercisesession;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,5 +41,10 @@ public class ExerciseSessionController {
     public ExerciseSession updateExerciseSession(@PathVariable Long id, @RequestBody ExerciseSession updatedExerciseSession) throws ExerciseSessionNotFoundException {
         
         return exerciseSessionService.updateExerciseSession(id, updatedExerciseSession);
+    }
+
+    @DeleteMapping("exercisesession/{id}")
+    public void deleteExerciseSession(@PathVariable Long id) throws ExerciseSessionNotFoundException {
+        exerciseSessionService.deleteExerciseSession(id);
     }
 }

@@ -53,6 +53,15 @@ public class ExerciseSessionService {
         return exerciseSessionRepository.save(existingSession);
     }
 
+    @Transactional
+    public void deleteExerciseSession(Long id) throws ExerciseSessionNotFoundException {
+        ExerciseSession existingSession = getExerciseSessionById(id);
+        if(existingSession == null){
+            throw new ExerciseSessionNotFoundException("Cannot find exercise session to delete");
+        }
+        exerciseSessionRepository.delete(existingSession);
+    }
+
     public class ExerciseSessionNotFoundException extends Exception {
 
         public ExerciseSessionNotFoundException(String string) {
