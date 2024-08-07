@@ -3,6 +3,7 @@ package com.peakperformance.peakperformance_backend.user;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
 import com.peakperformance.peakperformance_backend.goals.Goals;
 
 @Service
@@ -196,6 +198,18 @@ public class UserService implements UserDetailsService{
         
     }
 
+    @Transactional
+    public void addExerciseSessionById(Long id, ExerciseSession exerciseSession) throws UserNotFoundException {
+        exerciseSession.setDateTimeofExercise(LocalDateTime.now());
+        Optional<User> userOptional = userRepo.findById(id);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException(id + " not attached to any user");
+        }
+        User user = userOptional.get();
+        user.getExerciseSessions().add(exerciseSession);
+        userRepo.save(user);
+    }
+
     /*
      * Exception that is thrown when a query looking for a User returns null, meaning they do not exist
      */
@@ -206,6 +220,7 @@ public class UserService implements UserDetailsService{
         }
         
     }
+
     /*
      * Exception that is thrown when the password entered is wrong, when a user tries to log in
      */
