@@ -45,6 +45,9 @@ public class ExerciseSessionService {
     @Transactional
     public ExerciseSession updateExerciseSession(Long id, ExerciseSession updatedExerciseSession) throws ExerciseSessionNotFoundException {
         ExerciseSession existingSession = getExerciseSessionById(id);
+        if (existingSession == null) {
+            throw new ExerciseSessionNotFoundException("Cannot find exercise session to update");
+        }
         existingSession.setDateTimeofExercise(updatedExerciseSession.getDateTimeofExercise());
         existingSession.setExercise(updatedExerciseSession.getExercise());
         return exerciseSessionRepository.save(existingSession);
