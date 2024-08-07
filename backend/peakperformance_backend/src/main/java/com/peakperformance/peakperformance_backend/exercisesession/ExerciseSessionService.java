@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.peakperformance.peakperformance_backend.exercise.Exercise;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ExerciseSessionService {
 
@@ -40,7 +42,13 @@ public class ExerciseSessionService {
         return exerciseSessionRepository.save(exerciseSession);
     }
 
-    
+    @Transactional
+    public ExerciseSession updateExerciseSession(Long id, ExerciseSession updatedExerciseSession) throws ExerciseSessionNotFoundException {
+        ExerciseSession existingSession = getExerciseSessionById(id);
+        existingSession.setDateTimeofExercise(updatedExerciseSession.getDateTimeofExercise());
+        existingSession.setExercise(updatedExerciseSession.getExercise());
+        return exerciseSessionRepository.save(existingSession);
+    }
 
     public class ExerciseSessionNotFoundException extends Exception {
 
