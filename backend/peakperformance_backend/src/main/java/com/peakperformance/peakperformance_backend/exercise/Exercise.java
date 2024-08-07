@@ -25,12 +25,14 @@ public class Exercise {
         strategy = GenerationType.SEQUENCE,
         generator = "exersize_sequence"
     )
-
     private Long id;
+    
     private String name;
 
     @Enumerated(EnumType.STRING)
     private WorkoutType workoutType;
+
+    public Exercise(){}
     
     public Exercise(String name, WorkoutType workoutType) {
         this.name = name;

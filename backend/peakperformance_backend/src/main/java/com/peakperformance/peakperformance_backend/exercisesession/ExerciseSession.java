@@ -2,16 +2,22 @@ package com.peakperformance.peakperformance_backend.exercisesession;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
 import com.peakperformance.peakperformance_backend.exercise.Exercise;
 import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 import com.peakperformance.peakperformance_backend.user.User;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +29,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table
-
 public class ExerciseSession {
     @Id
     @SequenceGenerator (
@@ -35,24 +40,28 @@ public class ExerciseSession {
         strategy = GenerationType.SEQUENCE,
         generator = "exercisesession_sequence"
     )
-
-    private LocalDateTime dateTimeofExercise;
+    private Long id;
     
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "exercise_id", nullable = false)
+    @JoinColumn(name = "exercise_id")
     private Exercise exercise;
 
     @Column(columnDefinition = "jsonb")
     @Convert(converter = JSONBConverter.class)
-    private List<WeightReps> sets;
+    @Type(JsonType.class)
+    private List<WeightReps> sets = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @CreationTimestamp
+    private LocalDateTime dateTimeofExercise;
+
+    public ExerciseSession(){}
     
-    public ExerciseSession(LocalDateTime dateTimeofExercise, List<WeightReps> sets,
+    public ExerciseSession(List<WeightReps> sets,
             Exercise exercise, User user) {
-        this.dateTimeofExercise = dateTimeofExercise;
         this.sets = sets;
         this.exercise = exercise;
         this.user = user;
