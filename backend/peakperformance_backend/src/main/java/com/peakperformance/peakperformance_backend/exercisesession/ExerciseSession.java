@@ -1,29 +1,27 @@
 package com.peakperformance.peakperformance_backend.exercisesession;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import com.peakperformance.peakperformance_backend.converter.JSONBConverter;
-import com.peakperformance.peakperformance_backend.exercise.Exercise;
-import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
+import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.exercise.model.WorkoutType;
 import com.peakperformance.peakperformance_backend.user.User;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -42,14 +40,13 @@ public class ExerciseSession {
     )
     private Long id;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "exercise_id")
-    private Exercise exercise;
+    @Enumerated(EnumType.STRING)
+    private WorkoutType workoutType;
 
     @Column(columnDefinition = "jsonb")
     @Convert(converter = JSONBConverter.class)
     @Type(JsonType.class)
-    private List<WeightReps> sets = new ArrayList<>();
+    private Lift lift;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -60,10 +57,9 @@ public class ExerciseSession {
 
     public ExerciseSession(){}
     
-    public ExerciseSession(List<WeightReps> sets,
-            Exercise exercise, User user) {
-        this.sets = sets;
-        this.exercise = exercise;
+    public ExerciseSession(WorkoutType workoutType, Lift lift, User user) {
+        this.workoutType = workoutType;
+        this.lift = lift;
         this.user = user;
     }
 
@@ -75,20 +71,16 @@ public class ExerciseSession {
         this.dateTimeofExercise = dateTimeofExercise;
     }
 
-    public Exercise getExercise() {
-        return exercise;
+    public void setExercise(WorkoutType workoutType) {
+        this.workoutType = workoutType;
     }
 
-    public void setExercise(Exercise exercise) {
-        this.exercise = exercise;
+    public Lift getLift() {
+        return lift;
     }
 
-    public List<WeightReps> getSets() {
-        return sets;
-    }
-
-    public void setSets(List<WeightReps> sets) {
-        this.sets = sets;
+    public void setLift(Lift lift) {
+        this.lift = lift;
     }
 
     public User getUser() {
@@ -99,4 +91,11 @@ public class ExerciseSession {
         this.user = user;
     }
 
+    public WorkoutType getWorkoutType() {
+        return workoutType;
+    }
+
+    public void setWorkoutType(WorkoutType workoutType) {
+        this.workoutType = workoutType;
+    }
 }
