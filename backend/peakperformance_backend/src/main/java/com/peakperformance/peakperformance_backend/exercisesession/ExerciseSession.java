@@ -1,8 +1,8 @@
 package com.peakperformance.peakperformance_backend.exercisesession;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -61,10 +61,11 @@ public class ExerciseSession {
     public ExerciseSession(){}
     
     public ExerciseSession(List<WeightReps> sets,
-            Exercise exercise, User user) {
+            Exercise exercise, User user, Long id) {
         this.sets = sets;
         this.exercise = exercise;
         this.user = user;
+        this.id = id;
     }
 
     public LocalDateTime getDateTimeofExercise() {
@@ -97,6 +98,14 @@ public class ExerciseSession {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }
