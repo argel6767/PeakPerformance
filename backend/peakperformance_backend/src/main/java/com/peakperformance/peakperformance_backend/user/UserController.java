@@ -114,7 +114,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/addsession")
-    public String putMethodName(@PathVariable("userId") Long id, @RequestBody ExerciseSession exerciseSession) {
+    public String addExerciseSession(@PathVariable("userId") Long id, @RequestBody ExerciseSession exerciseSession) {
             try {
                 userService.addExerciseSessionById(id, exerciseSession);
                 return "Success!";
