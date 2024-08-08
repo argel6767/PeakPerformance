@@ -56,13 +56,7 @@ public class UserService implements UserDetailsService{
      * will throw UserNotFoundException if is null
      */
     public User getUserById(Long id) throws UserNotFoundException {
-        Optional<User> userOptional = userRepo.findById(id);
-        
-        if(!userOptional.isPresent()) {
-            throw new UserNotFoundException(id + "is not attached to any user");
-        }
-
-        User user = userOptional.get();
+        User user = isUserPresent(id);
         return user;
     }
 
@@ -71,15 +65,19 @@ public class UserService implements UserDetailsService{
      * will throw UserNotFoundException if is null
      */
     public User getUserByEmail(String email) throws UserNotFoundException {
+        User user = isUserPresentByEmail(email);
+        return user;
+    }
+
+    private User isUserPresentByEmail(String email) throws UserNotFoundException {
         Optional<User> userOptional = userRepo.findUserByEmail(email);
         if (!userOptional.isPresent()) {
             throw new UserNotFoundException("email not attched to any user");
         }
-
-        User user = userOptional.get();
-        return user;
+        else {
+            return userOptional.get();
+        }
     }
-
     public void deleteUserById(Long id) {
         userRepo.deleteById(id);
     }
@@ -101,11 +99,7 @@ public class UserService implements UserDetailsService{
     @Transactional
     //can be used for either updating a users current lifts or if they didnt put any originally
     public void updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) throws UserNotFoundException {
-        Optional<User> userOptional = userRepo.findById(id);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(id + " not attached to any user");
-        }
-        User user = userOptional.get();
+        User user = isUserPresent(id);
         user.setCurrentLifts(currentLifts);
         userRepo.save(user);
     }
@@ -113,11 +107,7 @@ public class UserService implements UserDetailsService{
     @Transactional
     //add more lifts to an already made list or make current lifts lists if null
     public void addLiftToUserCurrentLiftsById(Long id, Lift lift) throws UserNotFoundException {
-        Optional<User> userOptional = userRepo.findById(id);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(id + " not attached to any user");
-        }
-        User user = userOptional.get();
+        User user = isUserPresent(id);
         List<Lift> currentLifts = user.getCurrentLifts();
 
         //if user didnt add current lifts originally
@@ -132,11 +122,7 @@ public class UserService implements UserDetailsService{
     @Transactional
     //update goals or put goals if not were originall given
     public void addGoalsToUserById(Long id, Goals goal) throws UserNotFoundException {
-        Optional<User> userOptional = userRepo.findById(id);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(id + " not attached to any user");
-        }
-        User user = userOptional.get();
+        User user = isUserPresent(id);
         user.setGoals(goal);
         userRepo.save(user);
     }
@@ -168,11 +154,7 @@ public class UserService implements UserDetailsService{
      */
     @Transactional
     public void addUserDetailsById(Long id, User userDetails) throws UserNotFoundException {
-        Optional<User> userOptional = userRepo.findById(id);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException(id + " not attached to any user");
-        }
-        User user = userOptional.get();
+        User user = isUserPresent(id);
         updateUserDeatils(user, userDetails);
         if (userDetails.getGoals() != null) {
           updateGoals(user, userDetails);       
@@ -200,14 +182,24 @@ public class UserService implements UserDetailsService{
 
     @Transactional
     public void addExerciseSessionById(Long id, ExerciseSession exerciseSession) throws UserNotFoundException {
+        User user = isUserPresent(id);
         exerciseSession.setDateTimeofExercise(LocalDateTime.now());
+        user.getExerciseSessions().add(exerciseSession);
+        userRepo.save(user);
+    }
+
+    /*
+     * Checks if user exists in db based on id
+     * gets rid of repeating code
+     */
+    private User isUserPresent(Long id) throws UserNotFoundException {
         Optional<User> userOptional = userRepo.findById(id);
         if (!userOptional.isPresent()) {
             throw new UserNotFoundException(id + " not attached to any user");
         }
-        User user = userOptional.get();
-        user.getExerciseSessions().add(exerciseSession);
-        userRepo.save(user);
+        else {
+            return userOptional.get();
+        }
     }
 
     /*
