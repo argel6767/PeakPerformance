@@ -43,7 +43,7 @@ public class ExerciseSessionService {
             throw new ExerciseSessionNotFoundException("Cannot find exercise session to update");
         }
         existingSession.setDateTimeofExercise(updatedExerciseSession.getDateTimeofExercise());
-        existingSession.setExercise(updatedExerciseSession.getExercise());
+        existingSession.setWorkoutType(updatedExerciseSession.getWorkoutType());
         return exerciseSessionRepository.save(existingSession);
     }
 
