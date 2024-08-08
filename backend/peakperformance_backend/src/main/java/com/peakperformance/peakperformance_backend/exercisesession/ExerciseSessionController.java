@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @Controller
-@RequestMapping("/exercisesession/")
+@RequestMapping("/exercisesession")
 public class ExerciseSessionController {
     private final ExerciseSessionService exerciseSessionService;
 
@@ -24,18 +24,12 @@ public class ExerciseSessionController {
         this.exerciseSessionService = exerciseSessionService;
     }
     
-    @GetMapping("exercisesession/byDateTime")
+    @GetMapping("/byDateTime")
     public ExerciseSession getExerciseSessionByDateTime(@RequestParam("dateTime") String dateTime) throws ExerciseSessionNotFoundException {
         LocalDateTime localDateTime = LocalDateTime.parse(dateTime);
         return exerciseSessionService.getExerciseSessionByDateTime(localDateTime);
     }
-    /*
-    @GetMapping("exercisesession/byExercise")
-    public ExerciseSession getExerciseSessionByExercise(@RequestParam("exerciseId") Long exerciseId) throws ExerciseSessionNotFoundException {
-        Exercise exercise = exerciseService.getExerciseById(exerciseId);
-        return exerciseSessionService.getExerciseSessionByExercise(exercise);
-    }
-         */
+
 
     @PutMapping("exercisesession/{id}")
     public ExerciseSession updateExerciseSession(@PathVariable Long id, @RequestBody ExerciseSession updatedExerciseSession) throws ExerciseSessionNotFoundException {
@@ -47,4 +41,5 @@ public class ExerciseSessionController {
     public void deleteExerciseSession(@PathVariable Long id) throws ExerciseSessionNotFoundException {
         exerciseSessionService.deleteExerciseSession(id);
     }
+
 }

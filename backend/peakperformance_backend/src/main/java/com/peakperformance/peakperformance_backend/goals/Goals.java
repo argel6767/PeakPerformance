@@ -1,5 +1,6 @@
 package com.peakperformance.peakperformance_backend.goals;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.Type;
@@ -68,7 +69,7 @@ public class Goals {
     //only weight goal is given
     public Goals(Integer weightGoal) {
         this.weightGoal = weightGoal;
-        this.liftGoals = null;
+        this.liftGoals = new ArrayList<>();
     }
     
     //only lift goals are given
@@ -80,7 +81,7 @@ public class Goals {
     //no goals are given
     public Goals() {
         this.weightGoal = null;
-        this.liftGoals = null;
+        this.liftGoals = new ArrayList<>();
     }
     
     public Long getId() {
@@ -121,7 +122,7 @@ public class Goals {
     }
     //checks if lifting goals are present
     private boolean hasLiftGoals() {
-        return liftGoals != null;
+        return !liftGoals.isEmpty();
     }
 
     //overall status as to what goals have/haven't been set

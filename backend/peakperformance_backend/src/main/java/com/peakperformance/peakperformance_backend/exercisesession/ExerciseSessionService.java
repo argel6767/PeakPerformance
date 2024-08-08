@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.peakperformance.peakperformance_backend.exercise.Exercise;
 
 import jakarta.transaction.Transactional;
 
@@ -17,12 +16,7 @@ public class ExerciseSessionService {
         this.exerciseSessionRepository = exerciseSessionRepository;
     }
 
-    public ExerciseSession getExerciseSessionByExercise(Exercise exercise) throws ExerciseSessionNotFoundException {
-        if (exerciseSessionRepository.findByExercise(exercise) == null){
-            throw new ExerciseSessionNotFoundException("There is no exercise session doing this exercise");
-        }
-        return exerciseSessionRepository.findByExercise(exercise);
-    }
+
 
     public ExerciseSession getExerciseSessionById(Long id) throws ExerciseSessionNotFoundException {
         if (exerciseSessionRepository.findExerciseSessionById(id) == null){
