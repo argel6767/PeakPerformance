@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.peakperformance.peakperformance_backend.exercise.Exercise;
 import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSessionService.ExerciseSessionNotFoundException;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
