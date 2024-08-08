@@ -66,7 +66,8 @@ public class User implements UserDetails{
     @JoinColumn(name = "goals_id", referencedColumnName = "id", nullable = true)// This is the foreign key in the User table referencing Goals
     private Goals goals = new Goals(); //will be null if no goals are given
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "exercise_session_id", referencedColumnName = "id")
     private List<ExerciseSession> exerciseSessions = new ArrayList<>(); 
 
     @CreationTimestamp
