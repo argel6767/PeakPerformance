@@ -61,11 +61,11 @@ public class ExerciseSession {
     public ExerciseSession(){}
     
     public ExerciseSession(List<WeightReps> sets,
-            Exercise exercise, User user, Long id) {
+            Exercise exercise, User user) {
         this.sets = sets;
         this.exercise = exercise;
         this.user = user;
-        this.id = id;
+        
     }
 
     public LocalDateTime getDateTimeofExercise() {

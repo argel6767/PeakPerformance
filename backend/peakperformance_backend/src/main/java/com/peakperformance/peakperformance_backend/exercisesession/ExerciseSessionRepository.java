@@ -26,5 +26,5 @@ public interface ExerciseSessionRepository extends JpaRepository<ExerciseSession
 
     //custom find exercisesession by id method
     @Query("SELECT es FROM ExerciseSession es WHERE es.exersisesessionid = :exercisesessionid")
-    public ExerciseSession findExerciseSessionById(Long Id);
+    public ExerciseSession findExerciseSessionById(Long id);
 }
