@@ -16,12 +16,9 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -48,9 +45,7 @@ public class ExerciseSession {
     @Type(JsonType.class)
     private Lift lift;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    
 
     @CreationTimestamp
     private LocalDateTime dateTimeofExercise;
@@ -60,9 +55,8 @@ public class ExerciseSession {
     public ExerciseSession(WorkoutType workoutType, Lift lift, User user) {
         this.workoutType = workoutType;
         this.lift = lift;
-        this.user = user;
     }
-
+    
     public LocalDateTime getDateTimeofExercise() {
         return dateTimeofExercise;
     }
@@ -83,13 +77,7 @@ public class ExerciseSession {
         this.lift = lift;
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public WorkoutType getWorkoutType() {
         return workoutType;
