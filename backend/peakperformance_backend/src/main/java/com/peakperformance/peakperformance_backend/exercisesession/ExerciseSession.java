@@ -2,6 +2,9 @@ package com.peakperformance.peakperformance_backend.exercisesession;
 
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
@@ -52,6 +55,7 @@ public class ExerciseSession {
 
     public ExerciseSession(){}
     
+
     public ExerciseSession(WorkoutType workoutType, Lift lift, User user) {
         this.workoutType = workoutType;
         this.lift = lift;
@@ -83,7 +87,13 @@ public class ExerciseSession {
         return workoutType;
     }
 
+
+    public Long getId() {
+        return id;
+    }
+  
     public void setWorkoutType(WorkoutType workoutType) {
         this.workoutType = workoutType;
     }
+
 }
