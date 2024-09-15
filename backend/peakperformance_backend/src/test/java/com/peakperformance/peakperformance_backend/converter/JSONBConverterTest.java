@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,9 +81,11 @@ public class JSONBConverterTest {
     }
 
     @Test
-    void testConvertToEntityAttributeCorrectlyReturnsNullWithInvalidJson() {
+    void testConvertToEntityAttributeCorrectlyThrowsExceptionWithInvalidJson() {
         jsonb = "{\"wrongObject\":12, \"SETS\":\"23\"}";
-        List<Lift> nullList = converter.convertToEntityAttribute(jsonb);
-        assertNull(nullList);
+        assertThrows(RuntimeException.class, () -> {
+            converter.convertToEntityAttribute(jsonb);
+        }, "RuntimeException should have been thrown!");
+        
     }
 }
