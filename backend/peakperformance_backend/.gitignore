@@ -35,3 +35,6 @@ build/
 ### Environment Variables ###
 *.env
 *.pem
+
+### applications.properties
+backend/peakperformance_backend/src/main/resources/*

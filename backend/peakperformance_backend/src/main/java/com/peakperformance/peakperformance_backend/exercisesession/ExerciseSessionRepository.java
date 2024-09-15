@@ -13,6 +13,6 @@ public interface ExerciseSessionRepository extends JpaRepository<ExerciseSession
     public ExerciseSession findByDateTimeofExerciseSession(LocalDateTime dateTimeOfExerciseSession);
 
     //custom find exercisesession by id method
-    @Query("SELECT es FROM ExerciseSession es WHERE es.exersisesessionid = :exercisesessionid")
+    @Query("SELECT es FROM ExerciseSession es WHERE es.id = :id")
     public ExerciseSession findExerciseSessionById(Long id);
 }
