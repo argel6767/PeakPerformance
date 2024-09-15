@@ -37,4 +37,4 @@ build/
 *.pem
 
 ### applications.properties
-backend/peakperformance_backend/src/main/resources/application.properties
+backend/peakperformance_backend/src/main/resources/*
