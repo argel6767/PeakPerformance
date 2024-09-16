@@ -13,10 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class UserServiceTest {
 
-    @Mock
+    @InjectMocks
     UserService userService;
     
-    @InjectMocks
+    @Mock
     UserRepository userRepository;
 
     User user;
