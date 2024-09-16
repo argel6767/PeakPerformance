@@ -24,6 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
+import com.peakperformance.peakperformance_backend.user.UserService.EmailAlreadyTakenException;
+
 
 //TODO FINSIH THESE ONCE ExerciseSession is merged!!!!!
 @ExtendWith(MockitoExtension.class)
@@ -53,12 +55,32 @@ public class UserServiceTest {
         new Lift("DeadLift",  List.of(new WeightReps(100,64)))));
     }
 
+    //Todo test registerUser
+
+    @Test 
+    void testRegisterUserWithNewEmail() throws EmailAlreadyTakenException{
+        UserRegisterRequest userRegisterRequest = new UserRegisterRequest("notTaken@email.com", "password123");
+        when(userRepository.findUserByEmail(userRegisterRequest.getEmail())).thenReturn(Optional.empty());
+        userService.registerUser(userRegisterRequest);
+        verify(userRepository, times(1)).findUserByEmail(userRegisterRequest.getEmail());
+    }
+
+    @Test
+    void testRegisterUserWithEmailAlreadyTaken() {
+        UserRegisterRequest userRegisterRequest = new UserRegisterRequest(user.getEmail(), "password123");
+        when(userRepository.findUserByEmail(userRegisterRequest.getEmail())).thenReturn(Optional.of(user));
+        assertThrows(EmailAlreadyTakenException.class, () -> {
+            userService.registerUser(userRegisterRequest);
+        }, "EmailAlreadyTakenException should have been thrown!");
+        verify(userRepository, times(1)).findUserByEmail(userRegisterRequest.getEmail());
+    }
+
     @Test
     void testDeleteUserById() {
         Long userId = 1L;
-        Mockito.doNothing().when(userRepository).deleteById(userId);
+        doNothing().when(userRepository).deleteById(userId);
         userService.deleteUserById(userId);
-        Mockito.verify(userRepository, Mockito.times(1)).deleteById(userId);
+        Mockito.verify(userRepository, times(1)).deleteById(userId);
     }
 
     @Test
@@ -164,6 +186,11 @@ public class UserServiceTest {
         }, "UserNotFoundException should have been thrown!");
         verify(userRepository,times(1)).findById(5L);
     }
+
+    //TODO test adding User details
+    //TODO test adding/updating goals
+    //TODO test add ExerciseSession
+    
     @Test
     void testUpdateWeightOfUserById() {
         doNothing().when(userRepository).changeWeightOfUserById(user.getId(), 23);
