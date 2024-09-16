@@ -2,13 +2,16 @@ package com.peakperformance.peakperformance_backend.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
+import com.peakperformance.peakperformance_backend.exercise.model.Lift;
+import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
 import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
 
 //TODO FINSIH THESE ONCE ExerciseSession is merged!!!!!
@@ -32,13 +36,21 @@ public class UserServiceTest {
     UserRepository userRepository;
 
     User user;
+    User user2;
 
     @BeforeEach
     void init() {
         user = new User();
         user.setId(1L);
         user.setEmail("example@email.com");
-        user.setWeight(23);
+        user.setWeight(56);
+        
+        user2 = new User();
+        user2.setId(3L);
+        user2.setEmail("email@email.com");
+        user2.setWeight(25);
+        user2.setCurrentLifts(List.of(new Lift("Bench Press",  List.of(new WeightReps(500,2))),
+        new Lift("DeadLift",  List.of(new WeightReps(100,64)))));
     }
 
     @Test
@@ -51,7 +63,10 @@ public class UserServiceTest {
 
     @Test
     void testGetAllUsers() {
-        
+        when(userRepository.findAll()).thenReturn(List.of(user, user2));
+        List<User> users = userService.getAllUsers();
+        assertNotNull(users);
+        assertEquals(2, users.size());
     }
 
     @Test
@@ -86,26 +101,43 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> {
             userService.getUserById(2L);
         }, "UserNotFoundException should have been thrown!");
-
+        verify(userRepository, times(1)).findById(2L);
     }
 
     @Test
-    void testGetUserCurrentLiftsById() {
+    void testGetUserCurrentLiftsByIdWithValidId() {
+        when(userRepository.getCurrentLiftsOfUserById(user2.getId())).thenReturn(user2.getCurrentLifts());
+        List<Lift> currentLifts = userService.getUserCurrentLiftsById(user2.getId());
+        assertTrue(currentLifts.size() == 2);
+        assertEquals(user2.getCurrentLifts(), currentLifts);
+        verify(userRepository, times(1)).getCurrentLiftsOfUserById(user2.getId());
+    }
 
+    @Test
+    void testGetUserCurrentLiftsByIdWithValidButNoLiftsReturnsNull() {
+        when(userRepository.getCurrentLiftsOfUserById(user.getId())).thenReturn(null);
+        List<Lift> currtLifts = userService.getUserCurrentLiftsById(user.getId());
+        assertNull(currtLifts);
+        verify(userRepository, times(1)).getCurrentLiftsOfUserById(user.getId());
     }
 
     @Test
     void testGetUserWeightById() {
-
+        when(userRepository.getWeightOfUserById(user2.getId())).thenReturn(user2.getWeight());
+        Integer weight = userService.getUserWeightById(user2.getId());
+        assertEquals(user2.getWeight(), weight);
+        verify(userRepository, times(1)).getWeightOfUserById(user2.getId());
     }
 
     @Test
     void testUpdateCurrentLiftsOfUserById() {
-
+    
     }
 
     @Test
     void testUpdateWeightOfUserById() {
-
+        doNothing().when(userRepository).changeWeightOfUserById(user.getId(), 23);
+        userService.updateWeightOfUserById(user.getId(), 23);
+        verify(userRepository, times(1)).changeWeightOfUserById(user.getId(), 23);
     }
 }
