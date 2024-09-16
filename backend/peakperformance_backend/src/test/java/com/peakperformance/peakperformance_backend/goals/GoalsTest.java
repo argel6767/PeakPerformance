@@ -26,13 +26,13 @@ public class GoalsTest {
     List<Lift> liftingGoals = List.of(benchPressLift, squatLift);
 
     @Test
-    void testIfBothGoalsAreNotNull() {
+    void testIfBothGoalsAreGiven() {
         goals = new Goals(1, liftingGoals);
         assertEquals("both goals set", goals.overallGoalsStatus());
     }
 
     @Test
-    void testIfWeightGoalIsNull() {
+    void testIfWeightGoalIsNullWhenNoneIsGiven() {
 
         goals = new Goals(liftingGoals);
 
@@ -42,20 +42,20 @@ public class GoalsTest {
     }
 
     @Test
-    void testIfLiftGoalsIsNull() {
+    void testIfLiftGoalsAreEmptyWhenNoneAreGiven() {
         goals = new Goals(1);
 
-        assertTrue(goals.getLiftGoals()==null);
+        assertTrue(goals.getLiftGoals().size() == 0);
         assertEquals("lift goals not set", goals.liftGoalStatus()); 
         assertEquals("only weight goal set", goals.overallGoalsStatus());
     }
 
 
     @Test 
-    void testIfBothLiftGoalsAndWeightGoalAreNull() {
+    void testIfBothLiftGoalsAndWeightGoalAreNotPresntWhenNeitherAreGiven() {
         goals = new Goals();
 
-        assertTrue(goals.getWeightGoal() == null && goals.getLiftGoals() == null);
+        assertTrue(goals.getWeightGoal() == null && goals.getLiftGoals().size() == 0);
         assertEquals("no goals set", goals.overallGoalsStatus());
     }
 }
