@@ -130,10 +130,40 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateCurrentLiftsOfUserById() {
-    
+    void testUpdateCurrentLiftsOfUserByIdWithValidId() throws UserNotFoundException {
+        List<Lift> updateLifts = List.of(new Lift("Arnold Press", List.of(new WeightReps(100,2), new WeightReps(85,10))), new Lift("Squats", List.of(new WeightReps(10,4), new WeightReps(30,15))));
+        when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+        userService.updateCurrentLiftsOfUserById(user2.getId(), updateLifts);
+        verify(userRepository, times(1)).save(user2);
     }
 
+    @Test
+    void testUpdateCurrentLiftsOfUserByIdWithInvalidId() {
+        List<Lift> updateLifts = List.of(new Lift("Arnold Press", List.of(new WeightReps(100,2), new WeightReps(85,10))), new Lift("Squats", List.of(new WeightReps(10,4), new WeightReps(30,15))));
+        when(userRepository.findById(5L)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.updateCurrentLiftsOfUserById(5L, updateLifts);
+        }, "UserNotFoundException should have been thrown!");
+        verify(userRepository,times(1)).findById(5L);
+    }
+
+    @Test
+    void tesAddLiftToUserCurrentLiftsByIdWithValidId() throws UserNotFoundException {
+        Lift newLift = new Lift("Bicep Curl", List.of(new WeightReps(30,5), new WeightReps(25,10)));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        userService.addLiftToUserCurrentLiftsById(user.getId(), newLift);
+        verify(userRepository,times(1)).save(user);
+    }
+
+    @Test 
+    void testAddLiftToUserCurrentLiftByIdWithInvalidId() {
+        Lift newLift = new Lift("Bicep Curl", List.of(new WeightReps(30,5), new WeightReps(25,10)));
+        when(userRepository.findById(5L)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.addLiftToUserCurrentLiftsById(5L, newLift);
+        }, "UserNotFoundException should have been thrown!");
+        verify(userRepository,times(1)).findById(5L);
+    }
     @Test
     void testUpdateWeightOfUserById() {
         doNothing().when(userRepository).changeWeightOfUserById(user.getId(), 23);
