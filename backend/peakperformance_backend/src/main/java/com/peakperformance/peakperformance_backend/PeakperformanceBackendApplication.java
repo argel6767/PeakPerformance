@@ -15,7 +15,7 @@ public class PeakperformanceBackendApplication {
 	public static void main(String[] args) {
 
 		 // Load environment variables from .env file
-        Dotenv dotenv = Dotenv.configure().directory("backend/peakperformance_backend/.env").load();
+        Dotenv dotenv = Dotenv.configure().filename(".env").load();
 		
 
         // Set system properties
