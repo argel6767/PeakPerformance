@@ -23,17 +23,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.exercise.model.WeightReps;
+import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
 import com.peakperformance.peakperformance_backend.user.UserService.UserNotFoundException;
 import com.peakperformance.peakperformance_backend.user.UserService.EmailAlreadyTakenException;
 
 
-//TODO FINSIH THESE ONCE ExerciseSession is merged!!!!!
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
+    /*
+     * Injecting the mock userService that will otherwise would not be able to be instantied due to dependency injection
+     * of the repo
+     */
     @InjectMocks
     UserService userService;
     
+    /*
+     * This is what pretends to be the repo inside of userService, using this mocking we can replicate what the repo should
+     * return depending on the what was the input ie a vaild id or not valid id
+     */
     @Mock
     UserRepository userRepository;
 
@@ -185,9 +193,63 @@ public class UserServiceTest {
         verify(userRepository,times(1)).findById(5L);
     }
 
-    //TODO test adding User details
-    //TODO test adding/updating goals
-    //TODO test add ExerciseSession
+    @Test
+void testAddUserDetailsByIdWhenUserExistsAndGoalsAreNull() throws UserNotFoundException {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    User userDetails = new User();
+    userDetails.setWeight(70); // Update some details, but no goals
+    userService.addUserDetailsById(user.getId(), userDetails);
+    verify(userRepository, times(1)).findById(user.getId());
+    verify(userRepository, times(1)).save(user);
+    assertEquals(user.getWeight(), userDetails.getWeight()); // Check weight was updated
+}
+
+@Test
+void testAddUserDetailsByIdWhenUserExists() throws UserNotFoundException {
+    // Arrange
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    User userDetails = new User();
+    userDetails.setWeight(75); // Updating some details
+    userService.addUserDetailsById(user.getId(), userDetails);
+    verify(userRepository, times(1)).findById(user.getId());
+    verify(userRepository, times(1)).save(user);
+    assertEquals(user.getWeight(), userDetails.getWeight());
+}
+
+@Test
+void testAddUserDetailsByIdWhenUserNotFoundThrowsException() {
+    Long invalidId = 5L;
+    when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+    assertThrows(UserNotFoundException.class, () -> {
+        userService.addUserDetailsById(invalidId, new User());
+    }, "UserNotFoundException should have been thrown!");
+    verify(userRepository, times(1)).findById(invalidId);
+    verify(userRepository, times(0)).save(Mockito.any(User.class)); // Ensure save is not called
+}
+
+    
+    @Test
+void testAddExerciseSessionByIdWithValidUser() throws UserNotFoundException {
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    ExerciseSession exerciseSession = new ExerciseSession();
+    userService.addExerciseSessionById(user.getId(), exerciseSession);
+    assertNotNull(exerciseSession.getDateTimeofExercise());
+    verify(userRepository, times(1)).findById(user.getId());
+    verify(userRepository, times(1)).save(user);
+    assertTrue(user.getExerciseSessions().contains(exerciseSession));
+}
+
+@Test
+void testAddExerciseSessionByIdWhenUserNotFoundThrowsException() {
+    Long invalidId = 5L;
+    ExerciseSession exerciseSession = new ExerciseSession();
+    when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+    assertThrows(UserNotFoundException.class, () -> {
+        userService.addExerciseSessionById(invalidId, exerciseSession);
+    });
+    verify(userRepository, times(1)).findById(invalidId);
+    verify(userRepository, times(0)).save(Mockito.any(User.class));
+}
     
     @Test
     void testUpdateWeightOfUserById() {

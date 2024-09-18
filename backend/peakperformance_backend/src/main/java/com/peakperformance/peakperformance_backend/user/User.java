@@ -67,7 +67,7 @@ public class User implements UserDetails{
     private Goals goals = new Goals(); //will be null if no goals are given
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "exercise_session_id", referencedColumnName = "id")
+    @JoinColumn(name = "user-id", referencedColumnName = "id")
     private List<ExerciseSession> exerciseSessions = new ArrayList<>(); 
 
     @CreationTimestamp
