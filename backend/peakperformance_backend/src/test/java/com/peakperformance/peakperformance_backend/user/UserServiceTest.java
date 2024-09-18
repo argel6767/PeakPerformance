@@ -55,8 +55,6 @@ public class UserServiceTest {
         new Lift("DeadLift",  List.of(new WeightReps(100,64)))));
     }
 
-    //Todo test registerUser
-
     @Test 
     void testRegisterUserWithNewEmail() throws EmailAlreadyTakenException{
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest("notTaken@email.com", "password123");
