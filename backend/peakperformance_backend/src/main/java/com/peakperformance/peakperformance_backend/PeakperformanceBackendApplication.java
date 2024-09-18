@@ -19,9 +19,9 @@ public class PeakperformanceBackendApplication {
 		
 
         // Set system properties
-        System.setProperty("DATABASE_URL", dotenv.get("DATABASE_URL"));
-		System.setProperty("DATABASE_USERNAME", dotenv.get("DATABASE_USERNAME"));
-		System.setProperty("DATABASE_PASSWORD", dotenv.get("DATABASE_PASSWORD"));
+        System.setProperty("SUPABASE_DB_URL", dotenv.get("SUPABASE_DB_URL"));
+		System.setProperty("SUPABASE_DB_USERNAME", dotenv.get("SUPABASE_DB_USERNAME"));
+		System.setProperty("SUPABASE_DB_PASSWORD", dotenv.get("SUPABASE_DB_PASSWORD"));
 
 		SpringApplication.run(PeakperformanceBackendApplication.class, args);
 	}
