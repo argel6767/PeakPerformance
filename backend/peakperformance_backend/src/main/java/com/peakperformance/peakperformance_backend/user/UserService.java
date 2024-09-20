@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -98,33 +100,50 @@ public class UserService implements UserDetailsService{
 
     @Transactional
     //can be used for either updating a users current lifts or if they didnt put any originally
-    public void updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) throws UserNotFoundException {
-        User user = isUserPresent(id);
-        user.setCurrentLifts(currentLifts);
-        userRepo.save(user);
+    public ResponseEntity<?> updateCurrentLiftsOfUserById(Long id, List<Lift> currentLifts) {
+        try {
+            User user = isUserPresent(id);
+            user.setCurrentLifts(currentLifts);
+            return new ResponseEntity<>(userRepo.save(user), HttpStatus.OK);
+        } 
+        catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with id: " + id+ " "+ "does not exist!", HttpStatus.NOT_FOUND);
+        }
+       
     }
 
     @Transactional
     //add more lifts to an already made list or make current lifts lists if null
-    public void addLiftToUserCurrentLiftsById(Long id, Lift lift) throws UserNotFoundException {
-        User user = isUserPresent(id);
-        List<Lift> currentLifts = user.getCurrentLifts();
-
-        //if user didnt add current lifts originally
-        if (currentLifts == null) {
-            currentLifts = new ArrayList<>();
-            user.setCurrentLifts(currentLifts);
+    public ResponseEntity<?> addLiftToUserCurrentLiftsById(Long id, Lift lift) {
+        try {
+            User user = isUserPresent(id);
+            List<Lift> currentLifts = user.getCurrentLifts();
+    
+            //if user didnt add current lifts originally
+            if (currentLifts == null) {
+                currentLifts = new ArrayList<>();
+                user.setCurrentLifts(currentLifts);
+            }
+            currentLifts.add(lift);
+            return new ResponseEntity<>(userRepo.save(user), HttpStatus.OK);
+        } 
+        catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with id: " + id+ " "+ "does not exist!", HttpStatus.NOT_FOUND);
         }
-        currentLifts.add(lift);
-        userRepo.save(user);
+       
     }
 
     @Transactional
     //update goals or put goals if not were originall given
-    public void addGoalsToUserById(Long id, Goals goal) throws UserNotFoundException {
-        User user = isUserPresent(id);
-        user.setGoals(goal);
-        userRepo.save(user);
+    public ResponseEntity<?> addGoalsToUserById(Long id, Goals goal) {
+        try {
+            User user = isUserPresent(id);
+            user.setGoals(goal);
+            return new ResponseEntity<>(userRepo.save(user), HttpStatus.OK);
+        } catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with id: " + id+ " "+ "does not exist!", HttpStatus.NOT_FOUND);
+        }
+        
     }
 
     public List<Lift> getUserCurrentLiftsById(Long id) {
@@ -153,13 +172,18 @@ public class UserService implements UserDetailsService{
      * Allows for the rest of the user details to be saved in the db
      */
     @Transactional
-    public void addUserDetailsById(Long id, User userDetails) throws UserNotFoundException {
-        User user = isUserPresent(id);
-        updateUserDeatils(user, userDetails);
-        if (userDetails.getGoals() != null) {
-          updateGoals(user, userDetails);       
+    public ResponseEntity<?> addUserDetailsById(Long id, User userDetails) {
+        try {
+            User user = isUserPresent(id);
+            updateUserDeatils(user, userDetails);
+            if (userDetails.getGoals() != null) {
+            updateGoals(user, userDetails);       
+            }
+            return new ResponseEntity<>(userRepo.save(user), HttpStatus.OK); 
+        } catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with id: " + id+ " "+ "does not exist!", HttpStatus.NOT_FOUND);
         }
-        userRepo.save(user);
+       
     }
 
     private void updateGoals(User user, User userDetails) {
