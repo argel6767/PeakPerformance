@@ -2,6 +2,8 @@ package com.peakperformance.peakperformance_backend.goals;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -64,35 +66,35 @@ public class GoalsController {
     }
 
     @PutMapping("/{goalId}/weight")
-    public String updateGoalWeight(@PathVariable("goalId") Long id, @RequestBody Integer weightGoal) {
+    public ResponseEntity<String> updateGoalWeight(@PathVariable("goalId") Long id, @RequestBody Integer weightGoal) {
         try{
             goalsService.updateGoalWeightById(id, weightGoal);
-            return "Sucess!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch(GoalNotFoundException gnfe) {
-            return "id: " + id + " does not belong to any goal";
+            return new ResponseEntity<>("id: " + id + " does not belong to any goal", HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{goalId}/addlift")
-    public String addAGoalLiftById(@PathVariable("goalId") Long id, @RequestBody Lift newLiftGoal) {
+    public ResponseEntity<String> addAGoalLiftById(@PathVariable("goalId") Long id, @RequestBody Lift newLiftGoal) {
         try{
             goalsService.addAGoalLiftById(id, newLiftGoal);
-            return "Sucess!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch(GoalNotFoundException gnfe) {
-            return "id: " + id + " does not belong to any goal";
+            return new ResponseEntity<>("id: " + id + " does not belong to any goal", HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{goalId}/addlifts")
-    public String updateGoalLiftsById(@PathVariable("goalId") Long id, @RequestBody List<Lift> liftingGoals) throws GoalNotFoundException {
+    public ResponseEntity<String> updateGoalLiftsById(@PathVariable("goalId") Long id, @RequestBody List<Lift> liftingGoals) throws GoalNotFoundException {
         try{
             goalsService.updateGoalLiftsById(id, liftingGoals);
-            return "Sucess!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch(GoalNotFoundException gnfe) {
-            return "id: " + id + " does not belong to any goal";
+            return new ResponseEntity<>("id: " + id + " does not belong to any goal", HttpStatus.NOT_FOUND);
         }      
     }
     
