@@ -2,6 +2,9 @@ package com.peakperformance.peakperformance_backend.user;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,9 +62,9 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/weight")
-    public String addWeightOfUser(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
+    public ResponseEntity<String> addWeightOfUser(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
             userService.updateWeightOfUserById(id, weight);
-            return "Sucess!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/weight")
@@ -70,57 +73,57 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/currentlifts")
-    public String addCurrentLiftsOfUser(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) {
+    public ResponseEntity<String> addCurrentLiftsOfUser(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) {
         try {
             userService.updateCurrentLiftsOfUserById(id, currentLifts);
-            return "Success!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
+            return new ResponseEntity<>("No user found with id " + id, HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{userId}/addlift")
-    public String addLiftToCurrentLifts(@PathVariable("userId") Long id, @RequestBody Lift lift) {
+    public ResponseEntity<String> addLiftToCurrentLifts(@PathVariable("userId") Long id, @RequestBody Lift lift) {
         try {
             userService.addLiftToUserCurrentLiftsById(id, lift);
-            return "Success!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
+            return new ResponseEntity<>("No user found with id " + id, HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{userId}/addgoal")
-    public String addGoals(@PathVariable("userId") Long id, @RequestBody Goals goal) {        
+    public ResponseEntity<String> addGoals(@PathVariable("userId") Long id, @RequestBody Goals goal) {        
         try {
             userService.addGoalsToUserById(id, goal);
-            return "Success!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
+            return new ResponseEntity<>("No user found with id " + id, HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("{userId}/adddetails")
-    public String addUserDetails(@PathVariable("userId") Long id, @RequestBody User userDetails) {
+    public ResponseEntity<String> addUserDetails(@PathVariable("userId") Long id, @RequestBody User userDetails) {
         try {
             userService.addUserDetailsById(id, userDetails);
-            return "Success!";
+            return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
+            return new ResponseEntity<>("No user found with id " + id, HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{userId}/addsession")
-    public String addExerciseSession(@PathVariable("userId") Long id, @RequestBody ExerciseSession exerciseSession) {
+    public ResponseEntity<String> addExerciseSession(@PathVariable("userId") Long id, @RequestBody ExerciseSession exerciseSession) {
             try {
                 userService.addExerciseSessionById(id, exerciseSession);
-                return "Success!";
+                return new ResponseEntity<>("Success", HttpStatus.OK);
             }        
             catch(UserNotFoundException unfe) {
-                return "No user found with id " + id;
+                return new ResponseEntity<>("No user found with id " + id, HttpStatus.NOT_FOUND);
             }
     }
 
