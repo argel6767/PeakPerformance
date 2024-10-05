@@ -204,12 +204,20 @@ public class UserService implements UserDetailsService{
         
     }
 
+    /*
+     * Adds an exercise session to user via their ID
+     */
     @Transactional
-    public void addExerciseSessionById(Long id, ExerciseSession exerciseSession) throws UserNotFoundException {
-        User user = isUserPresent(id);
-        exerciseSession.setDateTimeofExercise(LocalDateTime.now());
-        user.getExerciseSessions().add(exerciseSession);
-        userRepo.save(user);
+    public ResponseEntity<?> addExerciseSessionById(Long id, ExerciseSession exerciseSession) throws UserNotFoundException {
+        try {
+            User user = isUserPresent(id);
+            exerciseSession.setDateTimeofExercise(LocalDateTime.now());
+            user.getExerciseSessions().add(exerciseSession);
+            return new ResponseEntity<>(userRepo.save(user), HttpStatus.OK); 
+        }
+        catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with id: " + id+ " "+ "does not exist!", HttpStatus.NOT_FOUND);
+        }
     }
 
     /*
