@@ -102,7 +102,7 @@ public class UserServiceTest {
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
         User foundUser = userService.getUserByEmail(user.getEmail());
         assertTrue(foundUser != null);
-        assertTrue(foundUser instanceof User);
+        assertTrue(foundUser instanceof ResponseEntity);
         assertEquals(user.getEmail(), foundUser.getEmail());
     }
 

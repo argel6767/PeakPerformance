@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService{
      * Will try to find user by id, will return null if none found with id
      * will throw UserNotFoundException if is null
      */
-    public ResponseEntity<?> getUserById(Long id) throws UserNotFoundException {
+    public ResponseEntity<?> getUserById(Long id) {
         try {
             User user = isUserPresent(id);
             return new ResponseEntity<>(user, HttpStatus.OK);
@@ -216,7 +216,7 @@ public class UserService implements UserDetailsService{
      * Adds an exercise session to user via their ID
      */
     @Transactional
-    public ResponseEntity<?> addExerciseSessionById(Long id, ExerciseSession exerciseSession) throws UserNotFoundException {
+    public ResponseEntity<?> addExerciseSessionById(Long id, ExerciseSession exerciseSession)  {
         try {
             User user = isUserPresent(id);
             exerciseSession.setDateTimeofExercise(LocalDateTime.now());

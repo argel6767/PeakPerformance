@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import com.peakperformance.peakperformance_backend.exercise.model.Lift;
 import com.peakperformance.peakperformance_backend.exercisesession.ExerciseSession;
@@ -18,7 +20,7 @@ import com.peakperformance.peakperformance_backend.user.UserService.UserNotFound
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("v1/users")
 public class UserController {
 
     private final UserService userService;
@@ -28,23 +30,13 @@ public class UserController {
     }
 
     @GetMapping("/id/{userId}")
-    public User getUserById(@PathVariable("userId") Long id) {
-        try {
-            return userService.getUserById(id);
-        }
-        catch (UserNotFoundException unfe) {
-            return null;
-        }
+    public ResponseEntity<?> getUserById(@PathVariable("userId") Long id) {
+        return userService.getUserById(id);
     }
 
     @GetMapping("/email/{email}")
-    public User getUserByEmail(@PathVariable("email") String email) throws UserNotFoundException {
-        try {
-            return userService.getUserByEmail(email);
-        }
-        catch (UserNotFoundException unfe) {
-            return null;
-        }  
+    public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) throws UserNotFoundException {
+        return userService.getUserByEmail(email);
     }
 
     @DeleteMapping("/delete/{userId}")
@@ -59,9 +51,8 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/weight")
-    public String addWeightOfUser(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
-            userService.updateWeightOfUserById(id, weight);
-            return "Sucess!";
+    public ResponseEntity<?> addWeightOfUser(@PathVariable("userId") Long id,  @RequestBody Integer weight) {
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/weight")
@@ -70,58 +61,29 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/currentlifts")
-    public String addCurrentLiftsOfUser(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) {
-        try {
-            userService.updateCurrentLiftsOfUserById(id, currentLifts);
-            return "Success!";
-        }
-        catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
-        }
+    public ResponseEntity<?> addCurrentLiftsOfUser(@PathVariable("userId") Long id, @RequestBody List<Lift> currentLifts) {
+        return userService.updateCurrentLiftsOfUserById(id, currentLifts);
     }
 
     @PutMapping("/{userId}/addlift")
-    public String addLiftToCurrentLifts(@PathVariable("userId") Long id, @RequestBody Lift lift) {
-        try {
-            userService.addLiftToUserCurrentLiftsById(id, lift);
-            return "Success!";
-        }
-        catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
-        }
+    public ResponseEntity<?> addLiftToCurrentLifts(@PathVariable("userId") Long id, @RequestBody Lift lift) {
+            return userService.addLiftToUserCurrentLiftsById(id, lift);
     }
 
     @PutMapping("/{userId}/addgoal")
-    public String addGoals(@PathVariable("userId") Long id, @RequestBody Goals goal) {        
-        try {
-            userService.addGoalsToUserById(id, goal);
-            return "Success!";
-        }
-        catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
-        }
+    public ResponseEntity<?> addGoals(@PathVariable("userId") Long id, @RequestBody Goals goal) {
+        return userService.addGoalsToUserById(id, goal);
     }
 
     @PutMapping("{userId}/adddetails")
-    public String addUserDetails(@PathVariable("userId") Long id, @RequestBody User userDetails) {
-        try {
-            userService.addUserDetailsById(id, userDetails);
-            return "Success!";
-        }
-        catch (UserNotFoundException unfe) {
-            return "No user found with id " + id;
-        }
+    public ResponseEntity<?> addUserDetails(@PathVariable("userId") Long id, @RequestBody User userDetails) {
+        return userService.addUserDetailsById(id, userDetails);
     }
 
     @PutMapping("/{userId}/addsession")
-    public String addExerciseSession(@PathVariable("userId") Long id, @RequestBody ExerciseSession exerciseSession) {
-            try {
-                userService.addExerciseSessionById(id, exerciseSession);
-                return "Success!";
-            }        
-            catch(UserNotFoundException unfe) {
-                return "No user found with id " + id;
-            }
+    public ResponseEntity<?> addExerciseSession(@PathVariable("userId") Long id, @RequestBody ExerciseSession exerciseSession) {
+        return userService.addExerciseSessionById(id, exerciseSession);
+
     }
 
 }
