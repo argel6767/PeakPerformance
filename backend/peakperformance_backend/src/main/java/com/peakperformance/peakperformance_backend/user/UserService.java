@@ -183,7 +183,7 @@ public class UserService implements UserDetailsService{
     public ResponseEntity<?> addUserDetailsById(Long id, User userDetails) {
         try {
             User user = isUserPresent(id);
-            updateUserDeatils(user, userDetails);
+            updateUserDetails(user, userDetails);
             if (userDetails.getGoals() != null) {
             updateGoals(user, userDetails);       
             }
@@ -202,7 +202,7 @@ public class UserService implements UserDetailsService{
     /*
      * Maps all values into the User object in the db
      */
-    private void updateUserDeatils(User user, User userDetails) {
+    private void updateUserDetails(User user, User userDetails) {
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
         user.setCurrentLifts(userDetails.getCurrentLifts());
