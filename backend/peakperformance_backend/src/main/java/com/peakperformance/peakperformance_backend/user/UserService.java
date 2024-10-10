@@ -1,9 +1,9 @@
 package com.peakperformance.peakperformance_backend.user;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,24 +57,32 @@ public class UserService implements UserDetailsService{
      * Will try to find user by id, will return null if none found with id
      * will throw UserNotFoundException if is null
      */
-    public User getUserById(Long id) throws UserNotFoundException {
-        User user = isUserPresent(id);
-        return user;
+    public ResponseEntity<?> getUserById(Long id) throws UserNotFoundException {
+        try {
+            User user = isUserPresent(id);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with id: " + id + "not found!", HttpStatus.NOT_FOUND);
+        }
     }
 
     /*
      * Will try to find user by email, will return null if none found with email
      * will throw UserNotFoundException if is null
      */
-    public User getUserByEmail(String email) throws UserNotFoundException {
-        User user = isUserPresentByEmail(email);
-        return user;
+    public ResponseEntity<?> getUserByEmail(String email)  {
+        try {
+            User user = isUserPresentByEmail(email);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (UserNotFoundException unfe) {
+            return new ResponseEntity<>("User with email: " + email + " not found!", HttpStatus.NOT_FOUND);
+        }
     }
 
     private User isUserPresentByEmail(String email) throws UserNotFoundException {
         Optional<User> userOptional = userRepo.findUserByEmail(email);
-        if (!userOptional.isPresent()) {
-            throw new UserNotFoundException("email not attched to any user");
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("email not attached to any user");
         }
         else {
             return userOptional.get();
@@ -165,7 +173,7 @@ public class UserService implements UserDetailsService{
         }
 
         User user = userOptional.get();
-        return user;        
+        return user;
     }
 
     /*
@@ -226,7 +234,7 @@ public class UserService implements UserDetailsService{
      */
     private User isUserPresent(Long id) throws UserNotFoundException {
         Optional<User> userOptional = userRepo.findById(id);
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException(id + " not attached to any user");
         }
         else {
@@ -237,7 +245,7 @@ public class UserService implements UserDetailsService{
     /*
      * Exception that is thrown when a query looking for a User returns null, meaning they do not exist
      */
-    public class UserNotFoundException extends Exception {
+    public static class UserNotFoundException extends Exception {
 
         public UserNotFoundException(String string) {
             super(string);
