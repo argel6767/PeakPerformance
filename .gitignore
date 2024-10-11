@@ -1,4 +1,5 @@
 *.DS_Store
 *.vscode/
-
+out/*
+.idea/*
 /Users/argelhernandezamaya/Desktop/Personal Projects/PeakPerformance/backend/peakperformance_backend/src/main/resources/application.properties
