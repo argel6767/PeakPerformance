@@ -30,13 +30,13 @@ public class ExerciseSessionController {
     }
 
 
-    @PutMapping("exercisesession/{id}")
+    @PutMapping("/{id}")
     public ExerciseSession updateExerciseSession(@PathVariable Long id, @RequestBody ExerciseSession updatedExerciseSession) throws ExerciseSessionNotFoundException {
         
         return exerciseSessionService.updateExerciseSession(id, updatedExerciseSession);
     }
 
-    @DeleteMapping("exercisesession/{id}")
+    @DeleteMapping("/{id}")
     public void deleteExerciseSession(@PathVariable Long id) throws ExerciseSessionNotFoundException {
         exerciseSessionService.deleteExerciseSession(id);
     }
