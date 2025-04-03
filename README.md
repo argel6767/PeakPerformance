@@ -1,30 +1,29 @@
-
 # PeakPerformance
 
-Welcome to **PeakPerformance**, a web fitness application designed to help you track and achieve your fitness goals. This README provides a brief overview of the project and its technologies. 
+Welcome to **PeakPerformance**, a fitness application designed to help you track and achieve your fitness goals while connecting with friends. This README provides a brief overview of the project and its technologies.
 
 ## Overview
 
-**PeakPerformance** is a web-based fitness application that will eventually be available as a mobile app using web view technology. The goal of this app is to provide users with a platform to log workouts, track progress, and stay motivated on their fitness journey.
+**PeakPerformance** is a mobile fitness application built with React Native. The goal of this app is to provide users with a platform to log workouts, track progress, connect with friends, and stay motivated on their fitness journey through friendly competition.
 
 ## Technologies
 
 - **Backend:**
-  - Spring Boot 3.0
+  - Django
   - PostgreSQL
 
 - **Frontend:**
-  - React
-
-- **Mobile Integration:**
-  - Capacitor (for converting the web app into a mobile app)
+  - React Native
 
 ## Features
 
-- Log workouts and track your progress over time.
-- Set fitness goals and monitor achievements.
-- View detailed statistics and analytics of your workouts.
-- User authentication and personalized profiles.
+- Log workouts and track your progress over time
+- Set fitness goals and monitor achievements
+- View detailed statistics and analytics of your workouts
+- User authentication and personalized profiles
+- Add friends and build your fitness community
+- Compare your progress with friends
+- "Strongest of the Week" feature highlighting which friend made the most strength improvements
 
 ## Installation
 
@@ -36,12 +35,27 @@ Welcome to **PeakPerformance**, a web fitness application designed to help you t
    cd peakperformance-backend
    ```
 
-2. Set up PostgreSQL and configure the database connection in `application.properties`.
-
-3. Build and run the Spring Boot application:
+2. Set up a virtual environment and activate it:
    ```bash
-   ./mvnw clean install
-   ./mvnw spring-boot:run
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Set up PostgreSQL and configure the database connection in `settings.py`.
+
+5. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
+
+6. Start the Django development server:
+   ```bash
+   python manage.py runserver
    ```
 
 ### Frontend
@@ -52,37 +66,21 @@ Welcome to **PeakPerformance**, a web fitness application designed to help you t
    cd peakperformance-frontend
    ```
 
-2. Install the dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Start the React application:
+3. Start the React Native development server:
    ```bash
-   npm start
+   npx react-native start
    ```
 
-### Mobile App (Future Implementation)
-
-1. Set up Capacitor in the frontend project:
+4. Run on Android or iOS:
    ```bash
-   npm install @capacitor/core @capacitor/cli
-   npx cap init
-   ```
-
-2. Add the desired platform (e.g., iOS, Android):
-   ```bash
-   npx cap add android
-   npx cap add ios
-   ```
-
-3. Build the project and sync with Capacitor:
-   ```bash
-   npm run build
-   npx cap copy
-   npx cap open android
+   npx react-native run-android
    # or
-   npx cap open ios
+   npx react-native run-ios
    ```
 
 ## Contributing
