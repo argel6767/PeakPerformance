@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
+
 export default function TabTwoScreen() {
   return (
     <ParallaxScrollView
@@ -23,6 +24,7 @@ export default function TabTwoScreen() {
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
       <ThemedText>This app includes example code to help you get started.</ThemedText>
+      <text className='text-5xl text-red-300'>Hello world</text>
       <Collapsible title="File-based routing">
         <ThemedText>
           This app has two screens:{' '}
