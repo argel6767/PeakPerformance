@@ -11,3 +11,6 @@ __pycache__/
 
 #Virtual Envs
 .venv
+
+#Envs
+.env
