@@ -8,3 +8,6 @@ out/*
 __pycache__/
 *.py[cod]
 *$py.class
+
+#Virtual Envs
+.venv
