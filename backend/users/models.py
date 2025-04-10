@@ -6,10 +6,18 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
+    friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
     email = models.EmailField(unique=True)
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+    
+class FriendShip(models.Model):
+    user = models.ForeignKey(CustomUser, related_name='friends', on_delete=models.CASCADE);
+    friend = models.ForeignKey(CustomUser, related_name='friends_with', on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ('user', 'friend')
 
 class TwoFactorCode(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='two_factor_codes')
