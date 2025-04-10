@@ -1,6 +1,7 @@
 from django.db import models
+from movement.models import Movement
+from users.models import CustomUser
 
-# Create your models here.
 '''
 Models for workouts; broken down into WorkoutExercises and Sets
 '''

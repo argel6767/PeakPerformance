@@ -1,5 +1,6 @@
 from django.db import models
 
+# Create your models here.
 '''
 Models for movements and muscles worked in said movements
 '''
