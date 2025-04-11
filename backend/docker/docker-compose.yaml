@@ -51,7 +51,7 @@ services:
       - DB_PORT=5432
     depends_on:
       - db
-    command: python manage.py test
+    command: python -m pytest users/tests.py movement/tests.py workout/tests.py -v
 
 volumes:
   postgres_data:
