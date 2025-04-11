@@ -17,4 +17,4 @@ class MovementSerializer(ModelSerializer):
     
     class Meta:
         model = Movement
-        fields = ['id', 'name', 'muscles_worked', 'type', 'movement_image_url']
+        fields = ['name', 'muscles_worked', 'type', 'movement_image_url']
