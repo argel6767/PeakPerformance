@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from models import Muscle, Movement
+from .models import Muscle, Movement
 from .permissions import IsAdminUser
 from .serializers import MuscleSerializer, MovementSerializer
 

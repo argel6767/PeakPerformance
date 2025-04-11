@@ -1,6 +1,5 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer,PrimaryKeyRelatedField
 
-from backend.users import serializers
 from .models import Muscle, Movement
 
 class MuscleSerializer(ModelSerializer):
@@ -10,7 +9,7 @@ class MuscleSerializer(ModelSerializer):
         
 class MovementSerializer(ModelSerializer):
     #finds the muscle entries in db to create entries in junction table
-    muscles_worked = serializers.PrimaryKeyRelatedField(
+    muscles_worked = PrimaryKeyRelatedField(
         queryset=Muscle.objects.all(),
         many=True,
         required=False
