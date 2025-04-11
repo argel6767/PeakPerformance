@@ -7,8 +7,8 @@ from .serializers import MuscleSerializer, MovementSerializer
 # Create your views here.
 
 """
-API view to create a new muscle entry.
-Only admin users can create new muscles.
+CRUD API view a new muscle entry.
+Only admin users have writing & reading privileges. Regular users are only allowed reading privileges
 """
 class MuscleViewSet(ModelViewSet):
     serializer_class = MuscleSerializer
@@ -22,8 +22,8 @@ class MuscleViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
 
 """
-API view to create a new movement entry.
-Only admin users can create new movements.
+CRUD API view a new movement entry.
+Only admin users have writing & reading privileges. Regular users are only allowed reading privileges
 """
 class MovementViewSet(ModelViewSet):
     serializer_class = MovementSerializer
