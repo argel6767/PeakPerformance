@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from movement.urls import muscle_patterns, movement_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('peakperformance_backend/users/', include('users.urls'))
+    path('api/users/', include('users.urls')),
+    path('api/muscles/', include(muscle_patterns)),
+    path('api/movements/', include(movement_patterns)),
 ]

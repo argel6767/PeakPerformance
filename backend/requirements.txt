@@ -7,4 +7,6 @@ PyJWT
 pytz
 python-dotenv
 psycopg2-binary
+pytest
+pytest-django
 gunicorn
