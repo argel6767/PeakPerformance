@@ -12,12 +12,14 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
     
-class FriendShip(models.Model):
-    user = models.ForeignKey(CustomUser, related_name='friends', on_delete=models.CASCADE);
+class Friendship(models.Model):
+    user = models.ForeignKey(CustomUser, related_name='friend', on_delete=models.CASCADE);
     friend = models.ForeignKey(CustomUser, related_name='friends_with', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         unique_together = ('user', 'friend')
+        ordering = ['created_at']
 
 class TwoFactorCode(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='two_factor_codes')
