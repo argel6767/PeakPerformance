@@ -36,5 +36,22 @@ services:
     ports:
       - "5432:5432"
 
+  test:
+    build: 
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+    command: python manage.py test
+
 volumes:
   postgres_data:

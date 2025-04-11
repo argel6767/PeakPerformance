@@ -29,7 +29,7 @@ class UserAPITest(APITestCase):
     
     def test_create_user(self):
         """Test user registration"""
-        response = self.client.post('/peak_performance_backend/users/register/', self.valid_register_data, format='json')
+        response = self.client.post('/api/users/register/', self.valid_register_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CustomUser.objects.count(), 2)  # Our test user + new user
         
@@ -41,7 +41,7 @@ class UserAPITest(APITestCase):
     def test_login_flow(self):
         """Test the two-factor authentication login flow"""
         # Step 1: Login request should return a message about 2FA code sent
-        response = self.client.post('/peak_performance_backend/users/login/', self.valid_login_data, format='json')
+        response = self.client.post('/api/users/login/', self.valid_login_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('message', response.data)
         self.assertIn('verification code', response.data['message'].lower())
@@ -58,7 +58,7 @@ class UserAPITest(APITestCase):
             'code': code_obj.code
         }
         
-        response = self.client.post('/peak_performance_backend/users/verify-2fa/', verify_data, format='json')
+        response = self.client.post('/api/users/verify-2fa/', verify_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verify response contains user data and cookies were set
@@ -85,13 +85,13 @@ class UserAPITest(APITestCase):
             'password': 'wrongpassword'
         }
         
-        response = self.client.post('/peak_performance_backend/users/login/', invalid_data, format='json')
+        response = self.client.post('/api/users/login/', invalid_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_invalid_2fa_code(self):
         """Test using an invalid 2FA code"""
         # First login to generate a 2FA code
-        self.client.post('/peak_performance_backend/users/login/', self.valid_login_data, format='json')
+        self.client.post('/api/users/login/', self.valid_login_data, format='json')
         
         # Try with wrong code
         invalid_verify_data = {
@@ -99,13 +99,13 @@ class UserAPITest(APITestCase):
             'code': '000000'  # Wrong code
         }
         
-        response = self.client.post('/peak_performance_backend/users/verify-2fa/', invalid_verify_data, format='json')
+        response = self.client.post('/api/users/verify-2fa/', invalid_verify_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_expired_2fa_code(self):
         """Test using an expired 2FA code"""
         # First login to generate a 2FA code
-        self.client.post('/peak_performance_backend/users/login/', self.valid_login_data, format='json')
+        self.client.post('/api/users/login/', self.valid_login_data, format='json')
         
         # Get the code and manually expire it
         code_obj = TwoFactorCode.objects.get(user=self.test_user)
@@ -118,13 +118,13 @@ class UserAPITest(APITestCase):
             'code': code_obj.code
         }
         
-        response = self.client.post('/peak_performance_backend/users/verify-2fa/', verify_data, format='json')
+        response = self.client.post('/api/users/verify-2fa/', verify_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_logout(self):
         """Test user logout functionality"""
         # First login and get authenticated
-        self.client.post('/peak_performance_backend/users/login/', self.valid_login_data, format='json')
+        self.client.post('/api/users/login/', self.valid_login_data, format='json')
         code_obj = TwoFactorCode.objects.get(user=self.test_user)
         
         verify_data = {
@@ -132,10 +132,10 @@ class UserAPITest(APITestCase):
             'code': code_obj.code
         }
         
-        self.client.post('/peak_performance_backend/users/verify-2fa/', verify_data, format='json')
+        self.client.post('/api/users/verify-2fa/', verify_data, format='json')
         
         # Then logout
-        response = self.client.post('/peak_performance_backend/users/logout/', {}, format='json')
+        response = self.client.post('/api/users/logout/', {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verify cookies were deleted
@@ -148,7 +148,7 @@ class UserAPITest(APITestCase):
         self.client.force_authenticate(user=self.test_user)
         
         # Get user info
-        response = self.client.get('/peak_performance_backend/users/user-info/')
+        response = self.client.get('/api/users/user-info/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['email'], self.test_user.email)
         self.assertEqual(response.data['username'], self.test_user.username)
@@ -156,7 +156,7 @@ class UserAPITest(APITestCase):
     def test_token_refresh(self):
         """Test JWT token refresh functionality"""
         # First login and authenticate to get tokens
-        self.client.post('/peak_performance_backend/users/login/', self.valid_login_data, format='json')
+        self.client.post('/api/users/login/', self.valid_login_data, format='json')
         code_obj = TwoFactorCode.objects.get(user=self.test_user)
         
         verify_data = {
@@ -164,20 +164,20 @@ class UserAPITest(APITestCase):
             'code': code_obj.code
         }
         
-        auth_response = self.client.post('/peak_performance_backend/users/verify-2fa/', verify_data, format='json')
+        auth_response = self.client.post('/api/users/verify-2fa/', verify_data, format='json')
         
         # Force client to use the cookies from the auth response
         self.client.cookies = auth_response.cookies
         
         # Request a token refresh
-        response = self.client.post('/peak_performance_backend/users/refresh/')
+        response = self.client.post('/api/users/refresh/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access_token', response.cookies)
     
     def test_password_reset_request(self):
         """Test requesting a password reset"""
         # Request password reset
-        response = self.client.post('/peak_performance_backend/users/password-reset/', {'email': 'testuser@example.com'}, format='json')
+        response = self.client.post('/api/users/password-reset/', {'email': 'testuser@example.com'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verify token was created
@@ -186,13 +186,13 @@ class UserAPITest(APITestCase):
     def test_password_reset_invalid_email(self):
         """Test password reset with non-existent email"""
         # Request password reset with non-existent email
-        response = self.client.post('/peak_performance_backend/users/password-reset/', {'email': 'nonexistent@example.com'}, format='json')
+        response = self.client.post('/api/users/password-reset/', {'email': 'nonexistent@example.com'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
     def test_password_reset_confirm(self):
         """Test confirming a password reset"""
         # First request a password reset
-        self.client.post('/peak_performance_backend/users/password-reset/', {'email': 'testuser@example.com'}, format='json')
+        self.client.post('/api/users/password-reset/', {'email': 'testuser@example.com'}, format='json')
         
         # Get the token
         token_obj = PasswordResetToken.objects.get(user=self.test_user)
@@ -203,7 +203,7 @@ class UserAPITest(APITestCase):
             'password': 'newpassword123'
         }
         
-        response = self.client.post('/peak_performance_backend/users/password-reset/confirm/', reset_data, format='json')
+        response = self.client.post('/api/users/password-reset/confirm/', reset_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verify password was changed
@@ -221,13 +221,13 @@ class UserAPITest(APITestCase):
             'password': 'newpassword123'
         }
         
-        response = self.client.post('/peak_performance_backend/users/password-reset/confirm/', reset_data, format='json')
+        response = self.client.post('/api/users/password-reset/confirm/', reset_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_password_reset_expired_token(self):
         """Test password reset with expired token"""
         # First request a password reset
-        self.client.post('/peak_performance_backend/users/password-reset/', {'email': 'testuser@example.com'}, format='json')
+        self.client.post('/api/users/password-reset/', {'email': 'testuser@example.com'}, format='json')
         
         # Get the token and manually expire it
         token_obj = PasswordResetToken.objects.get(user=self.test_user)
@@ -240,5 +240,5 @@ class UserAPITest(APITestCase):
             'password': 'newpassword123'
         }
         
-        response = self.client.post('/peak_performance_backend/users/password-reset/confirm/', reset_data, format='json')
+        response = self.client.post('/api/users/password-reset/confirm/', reset_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
