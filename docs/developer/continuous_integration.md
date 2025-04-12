@@ -1,3 +1,27 @@
+I'll create documentation for your project's CI workflow using the same formatting style as your existing documentation. This will explain how GitHub Actions detects changes to either the backend or frontend directories, then builds and tests the relevant section.
+
+# Continuous Integration with GitHub Actions
+
+This documentation explains how the PeakPerformance CI pipeline automatically builds and tests code changes using GitHub Actions.
+
+Before you begin, ensure you have the following configured in your repository:
+
+- A `.github/workflows` directory in your project root
+- Proper GitHub repository permissions for Actions
+
+## 1. CI Workflow Overview
+
+- The CI pipeline automatically triggers when changes are pushed to the repository
+- It detects which part of the codebase has changed (backend or frontend)
+- It builds and tests only the modified section
+- It reports the build and test status (pass/fail)
+
+## 2. Workflow Configuration
+
+- The workflow is defined in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+- To customize the workflow, modify this YAML file
+
+```yaml
 name: PeakPerformance CI Pipeline
 
 on:
@@ -47,7 +71,7 @@ jobs:
         run: npm build
       
       - name: Run frontend test script
-        run: npm frontend
+        run: npm test
 
   build-and-test-backend:
     needs: detect-changes
@@ -89,3 +113,27 @@ jobs:
     steps:
       - name: Final verification step
         run: echo "All tests run successfully!"
+```
+
+## 3. How It Works
+
+- The workflow uses path filtering to detect changes in specific directories
+- If changes are detected in the `backend` directory, the backend build and test job runs
+- If changes are detected in the `peakperformance_frontend` directory, the frontend build and test job runs
+- Both sections can be tested if changes are made to both directories
+
+## 4. Viewing CI Results
+
+- CI results are visible in the GitHub repository under the "Actions" tab
+- Each workflow run shows the status of the pipeline (success or failure)
+- You can click on a specific workflow run to see detailed logs
+- Pull requests will show the status of the CI checks directly in the PR interface
+
+## 5. Troubleshooting Failed Builds
+
+- If a build fails, check the detailed logs in the GitHub Actions tab
+- Common issues include:
+  - Missing dependencies
+  - Failed tests
+  - Syntax errors
+  - Configuration issues
