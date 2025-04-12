@@ -1,5 +1,3 @@
-I'll create documentation for your project's CI workflow using the same formatting style as your existing documentation. This will explain how GitHub Actions detects changes to either the backend or frontend directories, then builds and tests the relevant section.
-
 # Continuous Integration with GitHub Actions
 
 This documentation explains how the PeakPerformance CI pipeline automatically builds and tests code changes using GitHub Actions.
