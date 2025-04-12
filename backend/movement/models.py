@@ -25,7 +25,7 @@ class Movement(models.Model):
     movement_image_url = models.TextField(blank=True) # could use this in future to link to a S3 or Azure Storage that holds image of movement for frontend
     
     def __str__(self):
-        return self.movement_name
+        return self.name
     
     class Meta:
         ordering = ['name']

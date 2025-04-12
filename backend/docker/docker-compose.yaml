@@ -21,7 +21,7 @@ services:
       - db
 
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py makemigrations && python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"  
     
   db:
@@ -35,6 +35,23 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
+
+  test:
+    build: 
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+    command: python -m pytest users/tests.py movement/tests.py workout/tests.py -v
 
 volumes:
   postgres_data:
