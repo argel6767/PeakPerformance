@@ -2,11 +2,24 @@ import os
 from pathlib import Path
 import platform
 import subprocess
+import argparse
 
 cd = Path.cwd()
-docker_path = cd/'docker' if platform.system() != 'Linux' else cd/'backend'/'docker' # checking if this is a pipeline being ran, since its a linux machine
+docker_path = None # checking if this is a pipeline being ran, since its a linux machine
 is_os_windows = platform.system() == 'Windows' #windows needs shell otherwise permissions errors will not let script run processes
 
+def determine_environment():
+    print('SETTING ENVIRONMENT SPECIFIC VALUES')
+    parser = argparse.ArgumentParser(description='environment flag')
+    parser.add_argument('--env', type=str, choices=['dev', 'ci'], default='dev', help='Specify the environment (dev or ci)')
+    args = parser.parse_args()
+    global docker_path
+    if args == 'dev':
+        docker_path = cd/'docker'
+    else:
+        docker_path = cd/'backend'/'docker'
+    
+    
 def load_env_files():
     print('LOADING ENVIRONMENT VARIABLES')
     file_path = cd/'.env'
