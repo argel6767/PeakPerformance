@@ -74,10 +74,10 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
       
       - name: Run backend build script
-        run: python backend/scripts/build_image.py
+        run: python backend/scripts/build_image.py --env ci
       
       - name: Run backend test script
-        run: python backend/scripts/run_tests.py
+        run: python backend/scripts/run_tests.py --env ci
 
   # This job runs regardless of which part changed, useful for deployment or other steps
   final-steps:

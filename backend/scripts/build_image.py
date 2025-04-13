@@ -4,10 +4,14 @@ import platform
 import subprocess
 import argparse
 
+'''
+Builds the docker image of the backend
+'''
+
 cd = Path.cwd()
 is_os_windows = platform.system() == 'Windows' #windows needs shell otherwise permissions errors will not let script run processes
 
-        
+# determines what docker path to use when a script is ran via the --env flag
 def determine_docker_path():
     parser = argparse.ArgumentParser(description='environment flag')
     parser.add_argument('--env', type=str, choices=['dev', 'ci'], default='dev', help='Specify the environment (dev or ci)')
