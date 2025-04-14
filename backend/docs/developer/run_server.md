@@ -13,7 +13,7 @@ Before you begin, ensure you have the following installed on your system:
 - To build the container, run the following command:
 
 ```bash
-python scripts/run_server.py
+python scripts/run_server.py --env dev
 ```
 
 ## 2. Accessing the Server

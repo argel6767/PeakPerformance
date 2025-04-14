@@ -13,7 +13,7 @@ Before you begin, ensure you have the following installed on your system:
 - To build the container run the following command:
 
 ```bash
-python scripts/build_image.py
+python scripts/build_image.py --env dev
 ```
 
 This will build PeakPerformance's Django backend image with the newest changes done.

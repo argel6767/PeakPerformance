@@ -2,13 +2,13 @@ import subprocess
 from pathlib import Path
 import platform
 from sys import exit
-from build_image import load_env_files, delete_old_image_and_container, build_image
+from build_image import load_env_files, delete_old_image_and_container, build_image, determine_docker_path
 
 '''
 Loads env variables into terminal before building image, then running tests inside using docker-compose
 '''
 cd = Path.cwd()
-docker_path = cd/'docker' if platform.system() != 'Linux' else cd/'backend'/'docker' # checking if this is a pipeline being ran, since its a linux machine
+docker_path = determine_docker_path()  # checking if this is a pipeline being ran, or just dev
 is_os_windows = platform.system() == 'Windows' #windows needs shell otherwise permissions errors will not let script run processes
 
 def run_test_suite():
