@@ -11,12 +11,49 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-    
+
+    def send_friend_request(self, to_user):
+        """Send a friend request to another user"""
+        # Check if there's already a rejected request in the opposite direction
+        try:
+            rejected_request = Friendship.objects.get(user=to_user, friend=self, status='rejected')
+            # If found, update it to pending (optional - or you could delete it)
+            rejected_request.delete()
+        except Friendship.DoesNotExist:
+            pass
+            
+        # Create the new request as normal
+        Friendship.objects.update_or_create(user=self, friend=to_user, defaults={'status': 'pending'})
+
+    def accept_friend_request(self, from_user):
+        """Accept a friend request from another user"""
+        # Update the incoming request
+        Friendship.objects.filter(user=from_user, friend=self, status='pending').update(status='accepted')
+        # Create the symmetric relationship
+        Friendship.objects.create(user=self, friend=from_user, status='accepted')
+
+    def reject_friend_request(self, from_user):
+        """Reject a friend request from another user"""
+        Friendship.objects.filter(user=from_user, friend=self, status='pending').update(status='rejected')
+
+    def get_pending_requests(self):
+        """Get all pending requests received by this user"""
+        return Friendship.objects.filter(friend=self, status='pending')
+
 class Friendship(models.Model):
-    user = models.ForeignKey(CustomUser, related_name='friend', on_delete=models.CASCADE);
-    friend = models.ForeignKey(CustomUser, related_name='friends_with', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    STATUS_CHOICES = ( # different states for relationships
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('blocked', 'Blocked'),
+    )
     
+    user = models.ForeignKey(CustomUser, related_name='friend', on_delete=models.CASCADE)
+    friend = models.ForeignKey(CustomUser, related_name='friends_with', on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         unique_together = ('user', 'friend')
         ordering = ['created_at']
