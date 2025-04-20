@@ -4,7 +4,7 @@ from .views import SendFriendRequestView, AcceptFriendRequestView, RejectFriendR
 urlpatterns = [
     path('send-request/', SendFriendRequestView.as_view(), name='send-request'),
     path('accept-request/', AcceptFriendRequestView.as_view(), name='accept-request'),
-    path('reject/request/', RejectFriendRequestView.as_view(), name='reject-request'),
+    path('reject-request/', RejectFriendRequestView.as_view(), name='reject-request'),
     path('', GetAllStatusTypesRelationsView.as_view(), name='get-all-relations-by-type'),
     path('un-friend', UnFriendUserViews.as_view(), name='unfriend-user')
 ]
