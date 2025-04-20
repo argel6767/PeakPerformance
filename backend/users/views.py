@@ -132,7 +132,6 @@ class PasswordResetRequestView(APIView):
 
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
-    
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         
@@ -161,7 +160,8 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class SendFriendRequestView(APIView):
-    
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request):
         serializer = FriendRequestSerializer(data=request.data)
         if serializer.is_valid():
@@ -176,7 +176,8 @@ class SendFriendRequestView(APIView):
 
 
 class AcceptFriendRequestView(APIView):
-    
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request):
         serializer = FriendRequestSerializer(data=request.data)
         if serializer.is_valid():
@@ -191,6 +192,8 @@ class AcceptFriendRequestView(APIView):
 
 
 class RejectFriendRequestView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request):
         serializer = FriendRequestSerializer(data=request.data)
         if serializer.is_valid():
@@ -207,6 +210,7 @@ class RejectFriendRequestView(APIView):
 Gets all a users status type, ie all pending, all accepted, deleted, blocked etc
 '''
 class GetAllStatusTypesRelationsView(APIView):
+    permission_classes = (IsAuthenticated,)
     
     def get(self, request):
         from_user = request.user
@@ -220,6 +224,7 @@ class GetAllStatusTypesRelationsView(APIView):
         return Response({'success': serializer.data}, status=status.HTTP_STATUS_200_OK)
 
 class UnFriendUserViews(APIView):
+    permission_classes = (IsAuthenticated,)
     
     def post(self, request):
         serializer = FriendRequestSerializer(data=request.data)
