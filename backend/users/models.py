@@ -20,6 +20,15 @@ class Friendship(models.Model):
     class Meta:
         unique_together = ('user', 'friend')
         ordering = ['created_at']
+        
+class UserWeight(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_weight')
+    weight = models.DecimalField(max_digits=5, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['user','created_at']
+
 
 class TwoFactorCode(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='two_factor_codes')
