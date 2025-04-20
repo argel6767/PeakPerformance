@@ -214,11 +214,7 @@ class GetAllStatusTypesRelationsView(APIView):
         if (status_type is None):
             return Response({'error': 'No status type given'}, status=status.HTTP_400_BAD_REQUEST)
 
-        relations = [] # list of user's relations of a specifc type
-        if (status_type == 'pending'):
-            relations.append(from_user.get_pending_requests())
-        elif (status_type == 'accepted'):
-            relations.append(from_user.get_all_friends)
+        relations = from_user.get_all_users_of_status_type(status_type);
         
         serializer = FriendshipsSerializer(relations, many=True)
         return Response({'success': serializer.data}, status=status.HTTP_STATUS_200_OK)

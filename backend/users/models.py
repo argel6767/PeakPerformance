@@ -35,14 +35,11 @@ class CustomUser(AbstractUser):
     def reject_friend_request(self, from_user):
         """Reject a friend request from another user"""
         Friendship.objects.filter(user=from_user, friend=self, status='pending').update(status='rejected')
-
-    def get_pending_requests(self):
-        """Get all pending requests received by this user"""
-        return Friendship.objects.filter(friend=self, status='pending')
     
-    def get_all_friends(self):
+    # will get all the relation of a user of a certain status
+    def get_all_users_of_status_type(self, status):
         '''Get all friends of this user'''
-        return Friendship.objects.filter(user=self, status='accepted')
+        return Friendship.objects.filter(user=self, status=status)
     
     def unfriend_user(self, friend_user):
         """Remove a friendship with another user"""
