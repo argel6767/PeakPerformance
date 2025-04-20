@@ -39,6 +39,16 @@ class CustomUser(AbstractUser):
     def get_pending_requests(self):
         """Get all pending requests received by this user"""
         return Friendship.objects.filter(friend=self, status='pending')
+    
+    def get_all_friends(self):
+        '''Get all friends of this user'''
+        return Friendship.objects.filter(user=self, status='accepted')
+    
+    def unfriend_user(self, friend_user):
+        """Remove a friendship with another user"""
+        # Delete both directions of the relationship
+        Friendship.objects.filter(user=self, friend=friend_user, status='accepted').delete()
+        Friendship.objects.filter(user=friend_user, friend=self, status='accepted').delete()
 
 class Friendship(models.Model):
     STATUS_CHOICES = ( # different states for relationships

@@ -1,7 +1,7 @@
 from .serializers import (
     CustomUserSerializer, RegisterUserSerializer, LoginUserSerializer,
     TwoFactorVerifySerializer, PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer
+    PasswordResetConfirmSerializer, FriendRequestSerializer
 )
 from rest_framework.generics import RetrieveUpdateAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -14,6 +14,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from django.shortcuts import get_object_or_404
 from .models import CustomUser, PasswordResetToken
 from .services import UserEmailService
+from .serializers import FriendshipsSerializer
 
 # Create your views here.
 class UserInfoView(RetrieveUpdateAPIView):
@@ -157,4 +158,81 @@ class PasswordResetConfirmView(APIView):
                 "message": "Password has been reset successfully"
             }, status=status.HTTP_200_OK)
             
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SendFriendRequestView(APIView):
+    
+    def post(self, request):
+        serializer = FriendRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            # Grab user doing request
+            from_user = request.user
+            # The recipient is fetched using the email from the serializer
+            to_email = serializer.validated_data['email']
+            to_user = CustomUser.objects.get(email=to_email)
+            pending = from_user.send_friend_request(to_user)
+            return Response({"success": f"Friend request sent: {pending}"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AcceptFriendRequestView(APIView):
+    
+    def post(self, request):
+        serializer = FriendRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            #Grab user doing request
+            from_user = request.user
+            # The recipient is fetched using the email from the serializer
+            to_email = serializer.validated_data['email']
+            to_user = CustomUser.objects.get(email=to_email)
+            accepted = to_user.accept_friend_request(from_user=from_user)
+            return Response({'success': f'Friend request accepted! {accepted}'}, status=status.HTTP_STATUS_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RejectFriendRequestView(APIView):
+    def post(self, request):
+        serializer = FriendRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            #Grab user doing request
+            from_user = request.user
+            # The recipient is fetched using the email from the serializer
+            to_email = serializer.validated_data['email']
+            to_user = CustomUser.objects.get(email=to_email)
+            accepted = to_user.reject_friend_request(from_user=from_user)
+            return Response({'success': f'Friend request rejected! {accepted}'}, status=status.HTTP_STATUS_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+'''
+Gets all a users status type, ie all pending, all accepted, deleted, blocked etc
+'''
+class GetAllStatusTypesRelationsView(APIView):
+    
+    def get(self, request):
+        from_user = request.user
+        status_type = request.query_params.get('status-type')
+        if (status_type is None):
+            return Response({'error': 'No status type given'}, status=status.HTTP_400_BAD_REQUEST)
+
+        relations = [] # list of user's relations of a specifc type
+        if (status_type == 'pending'):
+            relations.append(from_user.get_pending_requests())
+        elif (status_type == 'accepted'):
+            relations.append(from_user.get_all_friends)
+        
+        serializer = FriendshipsSerializer(relations, many=True)
+        return Response({'success': serializer.data}, status=status.HTTP_STATUS_200_OK)
+
+class UnFriendUserViews(APIView):
+    
+    def post(self, request):
+        serializer = FriendRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            #Grab user doing request
+            from_user = request.user
+            # The recipient is fetched using the email from the serializer
+            to_email = serializer.validated_data['email']
+            friend_user = CustomUser.objects.get(email=to_email)
+            from_user.unfriend_user(friend_user)
+            return Response({'success': f'User: {to_email}, successfully un-added!'}, status=status.HTTP_STATUS_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
