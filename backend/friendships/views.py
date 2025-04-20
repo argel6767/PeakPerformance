@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from users.models import CustomUser
 from .serializers import FriendshipsSerializer, FriendRequestSerializer
 from rest_framework.views import APIView
@@ -36,7 +35,7 @@ class AcceptFriendRequestView(APIView):
             to_email = serializer.validated_data['email']
             to_user = CustomUser.objects.get(email=to_email)
             accepted = to_user.accept_friend_request(from_user=from_user)
-            return Response({'success': f'Friend request accepted! {accepted}'}, status=status.HTTP_STATUS_200_OK)
+            return Response({'success': f'Friend request accepted! {accepted}'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -52,7 +51,7 @@ class RejectFriendRequestView(APIView):
             to_email = serializer.validated_data['email']
             to_user = CustomUser.objects.get(email=to_email)
             accepted = to_user.reject_friend_request(from_user=from_user)
-            return Response({'success': f'Friend request rejected! {accepted}'}, status=status.HTTP_STATUS_200_OK)
+            return Response({'success': f'Friend request rejected! {accepted}'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 '''
@@ -70,7 +69,7 @@ class GetAllStatusTypesRelationsView(APIView):
         relations = from_user.get_all_users_of_status_type(status_type);
         
         serializer = FriendshipsSerializer(relations, many=True)
-        return Response({'success': serializer.data}, status=status.HTTP_STATUS_200_OK)
+        return Response({'success': serializer.data}, status=status.HTTP_200_OK)
 
 class UnFriendUserViews(APIView):
     permission_classes = (IsAuthenticated,)
@@ -84,5 +83,5 @@ class UnFriendUserViews(APIView):
             to_email = serializer.validated_data['email']
             friend_user = CustomUser.objects.get(email=to_email)
             from_user.unfriend_user(friend_user)
-            return Response({'success': f'User: {to_email}, successfully un-added!'}, status=status.HTTP_STATUS_204_NO_CONTENT)
+            return Response({'success': f'User: {to_email}, successfully un-added!'}, status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

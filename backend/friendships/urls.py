@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import *
+from .views import SendFriendRequestView, AcceptFriendRequestView, RejectFriendRequestView, GetAllStatusTypesRelationsView, UnFriendUserViews
 
-url_patterns = [
-    path('/send-request/', SendFriendRequestView.asView(), name='send-request'),
-    path('/accept-request/', AcceptFriendRequestView.asView(), name='accept-request'),
-    path('reject/request/', RejectFriendRequestView.asView(), name='reject-request'),
-    path('', GetAllStatusTypesRelationsView.asView(), name='get-all-relations-by-type'),
-    path('/un-friend', UnFriendUserViews.asView(), name='unfriend-user')
+urlpatterns = [
+    path('send-request/', SendFriendRequestView.as_view(), name='send-request'),
+    path('accept-request/', AcceptFriendRequestView.as_view(), name='accept-request'),
+    path('reject/request/', RejectFriendRequestView.as_view(), name='reject-request'),
+    path('', GetAllStatusTypesRelationsView.as_view(), name='get-all-relations-by-type'),
+    path('un-friend', UnFriendUserViews.as_view(), name='unfriend-user')
 ]

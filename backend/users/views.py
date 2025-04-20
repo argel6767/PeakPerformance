@@ -1,7 +1,7 @@
 from .serializers import (
     CustomUserSerializer, RegisterUserSerializer, LoginUserSerializer,
     TwoFactorVerifySerializer, PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer, FriendRequestSerializer
+    PasswordResetConfirmSerializer
 )
 from rest_framework.generics import RetrieveUpdateAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny

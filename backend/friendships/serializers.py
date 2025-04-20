@@ -1,4 +1,4 @@
-from users.models import CustomUser
+from users.models import CustomUser, Friendship
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, Serializer
 

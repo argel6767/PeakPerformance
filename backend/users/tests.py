@@ -15,12 +15,6 @@ class UserAPITest(APITestCase):
             password='password123'
         )
         
-        self.test_user2 = CustomUser.objects.create_user(
-            email='email@example.com',
-            username='user123',
-            password='password'
-        )
-        
         # Setup valid data for testing
         self.valid_register_data = {
             'email': 'newuser@example.com',
