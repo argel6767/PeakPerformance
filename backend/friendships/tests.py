@@ -163,15 +163,14 @@ class FriendshipAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, Friendship.objects.filter(user=self.test_user, status='accepted'))
 
-    def test_get_all_status_types_relations_with_no_query(self):
+    def test_get_all_status_types_relations_with_empty_query(self):
         #Arrange
         self._create_friendship_entry(status='accepted')
         self.client.force_authenticate(user=self.test_user)
         
         #Act 
-        response = self.client.get('api/friends')
+        response = self.client.get('api/friends/q?status=')
         
         # Assert
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
-    def 
