@@ -84,3 +84,15 @@ class PasswordResetConfirmSerializer(Serializer):
             return value
         except ValidationError as e:
             raise serializers.ValidationError(list(e.messages))
+        
+
+class FriendRequestSerializer(Serializer):
+    email = serializers.EmailField()
+    
+    def validate_email(self, value):
+        # Only validates that the email exists in the system, this is the email of the user the friend request is to, not sender
+        try:
+            CustomUser.objects.get(email=value)
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError("User with this email does not exist")
+        return value

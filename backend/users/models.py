@@ -17,20 +17,20 @@ class CustomUser(AbstractUser):
         # Check if there's already a rejected request in the opposite direction
         try:
             rejected_request = Friendship.objects.get(user=to_user, friend=self, status='rejected')
-            # If found, update it to pending (optional - or you could delete it)
+            # If found, delete the relation to update relationship direction
             rejected_request.delete()
         except Friendship.DoesNotExist:
             pass
             
-        # Create the new request as normal
-        Friendship.objects.update_or_create(user=self, friend=to_user, defaults={'status': 'pending'})
+        # Create the new request
+        return Friendship.objects.update_or_create(user=self, friend=to_user, defaults={'status': 'pending'})
 
     def accept_friend_request(self, from_user):
         """Accept a friend request from another user"""
         # Update the incoming request
         Friendship.objects.filter(user=from_user, friend=self, status='pending').update(status='accepted')
         # Create the symmetric relationship
-        Friendship.objects.create(user=self, friend=from_user, status='accepted')
+        return Friendship.objects.create(user=self, friend=from_user, status='accepted')
 
     def reject_friend_request(self, from_user):
         """Reject a friend request from another user"""
