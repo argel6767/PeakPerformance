@@ -69,6 +69,24 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install Docker Compose
+        env:
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          DEBUG: ${{secrets.DEBUG}}
+          ALLOWED_HOSTS: ${{secrets.ALLOWED_HOSTS}}
+          POSTGRES_DB: ${{secrets.POSTGRESS_DB}}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          DB_HOST: ${{secrets.DB_HOST}}
+          DB_PORT: ${{secrets.DB_PORT}}
+          EMAIL_BACKEND: ${{secrets.EMAIL_BACKEND}}
+          EMAIL_HOST: ${{secrets.EMAIL_HOST}}
+          EMAIL_PORT: ${{secrets.EMAIL_PORT}}
+          EMAIL_HOST_USER: ${{secrets.EMAIL_HOST_USER}}
+          EMAIL_HOST_PASSWORD: ${{secrets.EMAIL_HOST_PASSWORD}}
+          DEFAULT_FROM_EMAIL: ${{secrets.DEFAULT_FROM_EMAIL}}
+          EMAIL_USE_TLS: ${{secrets.EMAIL_USE_TLS}}
+          EMAIL_USE_SSL: ${{secrets.EMAIL_USE_SSL}}
+          
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
