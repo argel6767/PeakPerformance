@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/muscles/', include(muscle_patterns)),
     path('api/movements/', include(movement_patterns)),
+    path('api/friends/', include('friendships.urls'))
 ]

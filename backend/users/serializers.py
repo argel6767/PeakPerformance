@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, Serializer
-from .models import CustomUser, TwoFactorCode, PasswordResetToken
+from .models import CustomUser, TwoFactorCode, PasswordResetToken, Friendship
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -84,3 +84,4 @@ class PasswordResetConfirmSerializer(Serializer):
             return value
         except ValidationError as e:
             raise serializers.ValidationError(list(e.messages))
+        

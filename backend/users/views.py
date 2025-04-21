@@ -131,7 +131,6 @@ class PasswordResetRequestView(APIView):
 
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
-    
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         
