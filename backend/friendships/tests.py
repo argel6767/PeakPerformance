@@ -61,7 +61,7 @@ class FriendshipAPITest(APITestCase):
         response = self.client.post('/api/friends/send-request/', self.request_dto1, format='json')
 
         #Assert
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
         self.assertEqual(Friendship.objects.count(), 0)
     
     def test_send_friend_request_to_non_existing_user(self):
@@ -99,7 +99,7 @@ class FriendshipAPITest(APITestCase):
         response = self.client.post('/api/friends/accept-request/', self.request_dto1, format='json')
 
         #Assert
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
         self.assertEqual(Friendship.objects.count(), 0)
 
     def test_accept_friend_request_to_non_existing_user(self):
@@ -137,7 +137,7 @@ class FriendshipAPITest(APITestCase):
         response = self.client.post('/api/friends/reject-request/', self.request_dto1, format='json')
         
         #Assert
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
         self.assertEqual(Friendship.objects.count(), 0)
         
     def test_reject_friend_request_to_non_existing_user(self):
@@ -154,23 +154,54 @@ class FriendshipAPITest(APITestCase):
     def test_get_all_status_types_relations(self):
         #Arrange
         self._create_friendship_entry(status='accepted')
-        self.client.force_authenticate(user=self.test_user)
+        self.client.force_authenticate(user=self.test_user2)
         
         #Act
-        response = self.client.get('api/friends/q?status=accepted')
+        response = self.client.get('/api/friends/?status=accepted')
         
         #Assert
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, Friendship.objects.filter(user=self.test_user, status='accepted'))
-
-    def test_get_all_status_types_relations_with_empty_query(self):
+        body = response.data['success']
+        self.assertEqual(body[0]['friend_email'], self.test_user.email)
+        self.assertEqual(len(response.data['success']), 1)
+        
+    
+    def test_unfriend_user(self):
         #Arrange
         self._create_friendship_entry(status='accepted')
-        self.client.force_authenticate(user=self.test_user)
+        self.client.force_authenticate(self.test_user)
         
-        #Act 
-        response = self.client.get('api/friends/q?status=')
+        #Act
+        response = self.client.post('/api/friends/un-friend', self.request_dto2, format='json')
+
+        #Assert
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data['success'], f'User: {self.test_user2.email}, successfully un-added!')
+
+        #check db
+        self.assertRaises(Friendship.DoesNotExist, lambda: Friendship.objects.get(status='accepted'))
+        self.assertEqual(Friendship.objects.count(), 0)
         
-        # Assert
+    def test_unfriend_user_to_self(self):
+        #Arrange
+        self._create_friendship_entry(status='accepted')
+        self.client.force_authenticate(self.test_user)
+        
+        #Act
+        response = self.client.post('/api/friends/un-friend', self.request_dto1, format='json')
+
+        #Assert
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(Friendship.objects.count(), 1)
+
+    def test_unfriend_user_to_non_existent_user(self):
+        #Arrange
+        self._create_friendship_entry(status='accepted')
+        self.client.force_authenticate(self.test_user)
+
+        #Act
+        response = self.client.post('/api/friends/un-friend', self.unknown_user_dto, format='json')
+
+        #Assert
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+        self.assertEqual(Friendship.objects.count(), 1)

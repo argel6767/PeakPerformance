@@ -53,7 +53,6 @@ class Friendship(models.Model):
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
-        ('blocked', 'Blocked'),
     )
     
     user = models.ForeignKey(CustomUser, related_name='friend', on_delete=models.CASCADE)
