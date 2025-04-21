@@ -100,10 +100,18 @@ jobs:
   # This job runs regardless of which part changed, useful for deployment or other steps
   final-steps:
     needs: [detect-changes, build-and-test-frontend, build-and-test-backend]
-    if: |
-      always() && 
-      (needs.detect-changes.outputs.frontend-changed == 'true' || needs.detect-changes.outputs.backend-changed == 'true')
-    runs-on: ubuntu
+    if: always()
+    runs-on: ubuntu-latest
     steps:
+      - name: Check status
+        run: |
+          echo "Frontend changed: ${{ needs.detect-changes.outputs.frontend-changed }}"
+          echo "Backend changed: ${{ needs.detect-changes.outputs.backend-changed }}"
+        
       - name: Final verification step
+        if: ${{ needs.detect-changes.outputs.frontend-changed == 'true' || needs.detect-changes.outputs.backend-changed == 'true' }}
         run: echo "All tests run successfully!"
+      
+      - name: No changes detected
+        if: ${{ needs.detect-changes.outputs.frontend-changed != 'true' && needs.detect-changes.outputs.backend-changed != 'true' }}
+        run: echo "No changes detected in monitored paths."
