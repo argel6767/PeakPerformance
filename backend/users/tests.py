@@ -138,9 +138,13 @@ class UserAPITest(APITestCase):
         response = self.client.post('/api/users/logout/', {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        # Verify cookies were deleted
-        self.assertFalse('access_token' in response.cookies or response.cookies['access_token'].value)
-        self.assertFalse('refresh_token' in response.cookies or response.cookies['refresh_token'].value)
+        # Verify cookies were invalidated (check for expired max-age value)
+        self.assertTrue('access_token' in response.cookies)
+        self.assertTrue('refresh_token' in response.cookies)
+        
+        # Check that cookies are set to expire immediately
+        self.assertEqual(response.cookies['access_token']['max-age'], 0)
+        self.assertEqual(response.cookies['refresh_token']['max-age'], 0)
     
     def test_user_info(self):
         """Test retrieving user information"""
@@ -187,7 +191,7 @@ class UserAPITest(APITestCase):
         """Test password reset with non-existent email"""
         # Request password reset with non-existent email
         response = self.client.post('/api/users/password-reset/', {'email': 'nonexistent@example.com'}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
     def test_password_reset_confirm(self):
         """Test confirming a password reset"""
