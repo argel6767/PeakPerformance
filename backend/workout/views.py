@@ -1,15 +1,23 @@
 from .serializers import WorkoutDtoSerializer, WorkoutExerciseDtoSerializer, SetDtoSerializer
 from .models import Workout, WorkoutExercise, Set
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 # Create your views here.
 
-class WorkoutAPIView(APIView):
+'''
+CRUD API for Workout Model
+'''
+class WorkoutViewSet(ModelViewSet):
+    serializer_class = WorkoutDtoSerializer
     
-    def post(self, request):
-        serializer = WorkoutDtoSerializer(request.data)
+    def get_queryset(self):
+        # Return only workouts belonging to the current user
+        return Workout.objects.filter(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        
+        serializer = self.get_serializer(data=request.data)
         
         if (not serializer.is_Valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -19,10 +27,17 @@ class WorkoutAPIView(APIView):
         
         return Response({'success', workout}, status.HTTP_201_CREATED)
 
-class WorkoutExerciseAPIView(APIView):
+'''
+CRUD API for WorkoutExercise Model
+'''
+class WorkoutExerciseViewSet(ModelViewSet):
+    serializer_class = WorkoutExerciseDtoSerializer
     
-    def post(self, request):
-        serializer = WorkoutExerciseDtoSerializer(request.data, many=True)
+    def get_queryset(self):
+        return WorkoutExercise.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
         
         if (not serializer.is_Valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -30,11 +45,18 @@ class WorkoutExerciseAPIView(APIView):
         exercises = WorkoutExercise.createWorkoutExerciseEntries(workout_exercises_dto=serializer)
         
         return Response({'success', exercises}, status.HTTP_201_CREATED)
+
+'''
+CRUD API for Set Model
+'''
+class SetViewSet(ModelViewSet):
+    serializer_class = SetDtoSerializer
     
-class SetAPIView(APIView):
+    def get_queryset(self):
+        return Set.objects.all()
     
-    def post(self, request):
-        serializer = SetDtoSerializer(request.data, many=True)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
         
         if (not serializer.is_Valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

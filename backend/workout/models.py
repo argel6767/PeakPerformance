@@ -1,7 +1,6 @@
 from datetime import timedelta
 from django.utils import timezone
 from django.db import models
-from .serializers import WorkoutDtoSerializer, WorkoutExerciseDtoSerializer, SetDtoSerializer
 from movement.models import Movement
 from users.models import CustomUser
 
@@ -17,7 +16,7 @@ class Workout(models.Model):
     
     # static method for creating Workout entries
     @staticmethod
-    def createWorkoutEntry(email: str, workout_dto: WorkoutDtoSerializer) -> 'Workout':
+    def createWorkoutEntry(email: str, workout_dto) -> 'Workout':
         user_id = CustomUser.objects.get(email = email)
         duration = workout_dto.validated_data['duration']
         date = workout_dto.validated_data.get('date', None) # since date is optional due to default value
@@ -40,7 +39,7 @@ class WorkoutExercise(models.Model):
     
     #bulk creates all workout exercises of one Workout
     @staticmethod
-    def createWorkoutExerciseEntries(workout_exercises_dto: WorkoutExerciseDtoSerializer) -> list['WorkoutExercise']:
+    def createWorkoutExerciseEntries(workout_exercises_dto) -> list['WorkoutExercise']:
         workouts_exercises = []
         
         for exercise_data in workout_exercises_dto.validated_data:
@@ -63,7 +62,7 @@ class Set(models.Model):
     
     # Bulk creates all Sets of a WorkoutExercise
     @staticmethod
-    def createSetEntries(sets_dto: SetDtoSerializer) -> list['Set']:
+    def createSetEntries(sets_dto) -> list['Set']:
         sets = []
         
         for set_data in sets_dto.validated_data:
