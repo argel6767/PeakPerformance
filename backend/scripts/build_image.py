@@ -12,7 +12,22 @@ cd = Path.cwd()
 is_os_windows = platform.system() == 'Windows' #windows needs shell otherwise permissions errors will not let script run processes
 
 # determines what docker path to use when a script is ran via the --env flag
-def determine_docker_path():
+def determine_docker_path_run():
+    parser = argparse.ArgumentParser(description='environment flag')
+    parser.add_argument('--env', type=str, choices=['dev', 'ci'], default='dev', help='Specify the environment (dev or ci)')
+    args = parser.parse_args()
+    global docker_path
+    if args.env == 'dev':
+        path = cd/'docker'/'run'
+        print(f"Docker path (dev): {path}")
+        return path
+    else:
+        path = cd/'backend'/'docker'/'run'
+        print(f"Docker path (ci): {path}")
+        return path
+    
+    
+def determine_docker_path_test():
     parser = argparse.ArgumentParser(description='environment flag')
     parser.add_argument('--env', type=str, choices=['dev', 'ci'], default='dev', help='Specify the environment (dev or ci)')
     args = parser.parse_args()
@@ -20,7 +35,7 @@ def determine_docker_path():
     if args.env == 'dev':
         return cd/'docker'/'test'
     else:
-        return cd/'backend'/'docker'
+        return cd/'backend'/'docker'/'test'
 
 def load_env_files():
     print('LOADING ENVIRONMENT VARIABLES')
@@ -42,8 +57,14 @@ def delete_old_image_and_container():
     print(process)
     
 
-docker_path = determine_docker_path()
-def build_image():
+def build_image_run():
+    docker_path = determine_docker_path_run()
+    print('BUILDING IMAGE WITH NEW CHANGES')
+    process = subprocess.run(['docker-compose', 'build'], cwd=docker_path, shell=is_os_windows)
+    print(process)
+
+def build_image_test():
+    docker_path = determine_docker_path_test()
     print('BUILDING IMAGE WITH NEW CHANGES')
     process = subprocess.run(['docker-compose', 'build'], cwd=docker_path, shell=is_os_windows)
     print(process)
