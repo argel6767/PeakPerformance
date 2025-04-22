@@ -19,7 +19,8 @@ def run_test_suite():
     return process.returncode
 
 def main():
-    load_env_files()
+    if (len(argv) == 1 or argv[2] == 'dev'):
+        load_env_files()
     delete_old_image_and_container()
     build_image_test()
     exit_code = run_test_suite()

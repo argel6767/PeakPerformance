@@ -40,9 +40,7 @@ def determine_docker_path_test():
 def load_env_files():
     print('LOADING ENVIRONMENT VARIABLES')
     file_path = cd/'.env'
-    if not file_path.exists(): #CI Pipeline being ran
-        file_path = cd/'backend'/'.env.ci'
-        
+
     with open(file_path) as f:
         for line in f:
             if line.startswith("#") or not line.strip():
