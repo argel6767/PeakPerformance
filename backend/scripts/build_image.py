@@ -18,7 +18,7 @@ def determine_docker_path():
     args = parser.parse_args()
     global docker_path
     if args.env == 'dev':
-        return cd/'docker'
+        return cd/'docker'/'test'
     else:
         return cd/'backend'/'docker'
 
