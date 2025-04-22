@@ -3,7 +3,7 @@
 services:
   web:
     build: 
-      context: ..
+      context: ../../
       dockerfile: docker/Dockerfile
     restart: always
     ports:
@@ -46,7 +46,7 @@ services:
 
   test:
     build: 
-      context: ..
+      context: ../..
       dockerfile: docker/Dockerfile
     environment:
       - DEBUG=1
