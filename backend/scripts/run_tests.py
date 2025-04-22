@@ -4,6 +4,8 @@ import platform
 from sys import exit
 from build_image import load_env_files, delete_old_image_and_container, build_image_test, determine_docker_path_test
 from end_server import shut_down_server_test
+from sys import exit, argv
+
 
 '''
 Loads env variables into terminal before building image, then running tests inside using docker-compose
