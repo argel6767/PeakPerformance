@@ -17,13 +17,22 @@ class Workout(models.Model):
     # static method for creating Workout entries
     @staticmethod
     def createWorkoutEntry(email: str, workout_dto) -> 'Workout':
-        user_id = CustomUser.objects.get(email = email)
-        duration = workout_dto.validated_data['duration']
-        date = workout_dto.validated_data.get('date', None) # since date is optional due to default value
+        user = CustomUser.objects.get(email=email)
         
-        if (date is None):
-            return Workout.objects.create(user = user_id, duration = duration)
-        return Workout.objects.create(user=user_id, duration=duration, date=date)
+        # Start with required fields
+        create_kwargs = {'user': user}
+        
+        # Add optional fields only if they're not None
+        duration = workout_dto.validated_data.get('duration', None)
+        if duration is not None:
+            create_kwargs['duration'] = duration
+            
+        date = workout_dto.validated_data.get('date', None)
+        if date is not None:
+            create_kwargs['date'] = date
+        
+        # Create and return the workout with only the non-None fields
+        return Workout.objects.create(**create_kwargs)
     
     def __str__(self):
         return f"{self.user.first_name}'s workout on {self.date} lasted for {self.duration}"

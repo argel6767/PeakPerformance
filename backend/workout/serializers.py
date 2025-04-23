@@ -4,6 +4,7 @@ from rest_framework.serializers import ModelSerializer
 
 class WorkoutDtoSerializer(ModelSerializer):
     date = serializers.DateField(required=False)
+    duration = serializers.DurationField(required=False)
 
     class Meta:
         model = Workout
