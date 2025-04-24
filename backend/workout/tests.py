@@ -71,7 +71,7 @@ class WorkoutAPITest(APITestCase):
         movement_image_url='https://image.com'
     )
 
-         # set the many-to-many relationship
+        # set the many-to-many relationship
         self.movement.muscles_worked.set([self.muscle])
         
         self.workout_exercise = WorkoutExercise.objects.create(

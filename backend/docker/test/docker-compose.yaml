@@ -1,37 +1,6 @@
 
 
 services:
-  web:
-    build: 
-      context: ../../
-      dockerfile: docker/Dockerfile
-    restart: always
-    ports:
-      - "8000:8000"
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=db
-      - DB_PORT=5432
-      - EMAIL_BACKEND=${EMAIL_BACKEND}
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_PORT=${EMAIL_PORT}
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
-      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
-      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
-    depends_on:
-      - db
-
-    command: >
-      sh -c "python manage.py makemigrations && python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"  
-    
   db:
     image: postgres:latest
     restart: always
