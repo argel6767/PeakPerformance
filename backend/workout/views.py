@@ -3,6 +3,7 @@ from .models import Workout, WorkoutExercise, Set
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 '''
@@ -10,6 +11,8 @@ CRUD API for Workout Model
 '''
 class WorkoutViewSet(ModelViewSet):
     serializer_class = WorkoutDtoSerializer
+    permission_classes = [IsAuthenticated]
+
     
     def get_queryset(self):
         # Return only workouts belonging to the current user
@@ -33,6 +36,8 @@ CRUD API for WorkoutExercise Model
 '''
 class WorkoutExerciseViewSet(ModelViewSet):
     serializer_class = WorkoutExerciseDtoSerializer
+    permission_classes = [IsAuthenticated]
+
     
     def get_queryset(self):
         return WorkoutExercise.objects.all()
@@ -53,6 +58,8 @@ CRUD API for Set Model
 '''
 class SetViewSet(ModelViewSet):
     serializer_class = SetDtoSerializer
+    permission_classes = [IsAuthenticated]
+
     
     def get_queryset(self):
         return Set.objects.all()
