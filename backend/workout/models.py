@@ -8,7 +8,6 @@ from users.models import CustomUser
 '''
 Models for workouts; broken down into WorkoutExercises and Sets
 '''
-
 class Workout(models.Model):
     user = models.ForeignKey(CustomUser, related_name="workouts", on_delete=models.CASCADE)
     duration = models.DurationField(default=timedelta) #duration of workout

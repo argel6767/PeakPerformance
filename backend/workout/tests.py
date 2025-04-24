@@ -1,7 +1,10 @@
 from django.test import TestCase
-from workout.models import Set
-from users.models import UserWeight
-from datetime import datetime
+from rest_framework.test import APITestCase
+from rest_framework import status
+from workout.models import Set, Workout, WorkoutExercise
+from users.models import CustomUser, UserWeight
+from movement.models import Movement, Muscle
+from datetime import datetime, timedelta
 from workout.analysis import *
 
 # Create your tests here.
@@ -34,3 +37,89 @@ class AnalysisTestCase(TestCase):
     def test_calculate_relative_strength(self):
         expected_relative_strength = self.expected_orm / self.userWeight.weight
         self.assertEqual(expected_relative_strength, calculate_relative_strength(self.expected_orm, self.userWeight))
+
+class WorkoutAPITest(APITestCase):
+    
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(
+            email='user@example.com',
+            username='user',
+            password='password',
+            is_staff=False
+        )
+        
+        self.workout = Workout.objects.create(
+            user = self.user,
+            duration = '00:30:23',
+            date = '2025-12-23'
+        )
+        
+        self.initial_workout = Workout.objects.create(
+            user = self.user,
+            duration = '00:00:00',
+            date = '2025-12-23'
+        )
+        
+        self.muscle = Muscle.objects.create(
+            name = 'Biceps',
+            category = 'arms'
+        )
+        
+        self.movement = Movement.objects.create(
+        name='Supinated Curls',
+        type='strength',
+        movement_image_url='https://image.com'
+    )
+
+         # set the many-to-many relationship
+        self.movement.muscles_worked.set([self.muscle])
+        
+        self.workout_exercise = WorkoutExercise.objects.create(
+            workout = self.workout,
+            movement = self.movement,
+            order = 0
+        )
+        
+        self.workout_dto_all_values = {
+            'date': '2020-01-01',
+            'duration': '01:23:34'
+        }
+        
+        self.workout_dto_no_date = {
+            'duration': '01:23:34'
+        }
+        
+        self.workout_dto_no_duration = {
+            'date': '2020-01-01'
+        }
+        
+        self.workout_exercise_dto = {
+            'workout' : self.workout,
+            'movement' : self.movement,
+            'order' : 1
+        }
+        
+        self.set_dto = {
+            'weight': 40,
+            'reps': 9,
+            'workout_exercise': self.workout_exercise,
+            'order' : 1
+        }
+        
+    def test_create_workout_entry(self):
+        #Arrange
+        self.client.force_login(user=self.user)
+        
+        #Acr
+        response  = self.client.post('/api/workouts/', self.workout_dto_all_values, format='json')
+        
+        #Assert
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Workout.objects.count(), 3)
+        
+        #Check DB
+        workout = Workout.objects.get(user = self.user, duration='01:23:34')
+        self.assertEqual(workout.user, self.user)
+        self.assertEqual(workout.duration, timedelta('01:23:34'))
+        self.assertEqual(workout.date, '2020-01-01')
+        

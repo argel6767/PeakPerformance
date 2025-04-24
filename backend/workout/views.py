@@ -19,13 +19,14 @@ class WorkoutViewSet(ModelViewSet):
         
         serializer = self.get_serializer(data=request.data)
         
-        if (not serializer.is_Valid()):
+        if (not serializer.is_valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         user = request.user
-        workout = Workout.createWorkoutEntry(email=user, workout_dto=serializer)
+        workout = Workout.createWorkoutEntry(email=user.email, workout_dto=serializer)
+        workout_serialized = self.get_serializer(instance=workout)
         
-        return Response({'success', workout}, status.HTTP_201_CREATED)
+        return Response({'success': workout_serialized.data}, status.HTTP_201_CREATED)
 
 '''
 CRUD API for WorkoutExercise Model
@@ -39,12 +40,13 @@ class WorkoutExerciseViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, many=True)
         
-        if (not serializer.is_Valid()):
+        if (not serializer.is_valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         exercises = WorkoutExercise.createWorkoutExerciseEntries(workout_exercises_dto=serializer)
+        exercises_serialized = self.get_serializer(instance=exercises, many=True)
         
-        return Response({'success', exercises}, status.HTTP_201_CREATED)
+        return Response({'success': exercises_serialized.data}, status.HTTP_201_CREATED)
 
 '''
 CRUD API for Set Model
@@ -58,9 +60,10 @@ class SetViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, many=True)
         
-        if (not serializer.is_Valid()):
+        if (not serializer.is_valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         sets = Set.createSetEntries(sets_dto=serializer)
+        sets_serialized = self.get_serializer(instance=sets, many=True)
 
-        return Response({'success', sets}, status=status.HTTP_201_CREATED)
+        return Response({'success': sets_serialized.data}, status=status.HTTP_201_CREATED)
