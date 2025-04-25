@@ -5,7 +5,7 @@ from .models import Muscle, Movement
 class MuscleSerializer(ModelSerializer):
     class Meta:
         model = Muscle
-        fields = ('name', 'category')
+        fields = '__all__'
         
 class MovementSerializer(ModelSerializer):
     #finds the muscle entries in db to create entries in junction table
@@ -17,4 +17,4 @@ class MovementSerializer(ModelSerializer):
     
     class Meta:
         model = Movement
-        fields = ['name', 'muscles_worked', 'type', 'movement_image_url']
+        fields = '__all__'
