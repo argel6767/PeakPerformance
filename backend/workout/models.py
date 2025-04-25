@@ -1,5 +1,4 @@
-from datetime import timedelta
-from django.utils import timezone
+from datetime import timedelta, date
 from django.db import models
 from movement.models import Movement
 from users.models import CustomUser
@@ -11,7 +10,7 @@ Models for workouts; broken down into WorkoutExercises and Sets
 class Workout(models.Model):
     user = models.ForeignKey(CustomUser, related_name="workouts", on_delete=models.CASCADE)
     duration = models.DurationField(default=timedelta) #duration of workout
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=date.today)
     
     # static method for creating Workout entries
     @staticmethod
@@ -34,7 +33,7 @@ class Workout(models.Model):
         return Workout.objects.create(**create_kwargs)
     
     def __str__(self):
-        return f"{self.user.first_name}'s workout on {self.date} lasted for {self.duration}"
+        return f"{self.user.first_name}'s workout on {self.date}, lasted for {self.duration}"
     
     class Meta:
         ordering = ['date']
@@ -57,7 +56,7 @@ class WorkoutExercise(models.Model):
         return WorkoutExercise.objects.bulk_create(workouts_exercises)
     
     def __str__(self):
-        return f'{self.movement.name} during {self.workout}'
+        return f'{self.movement.name} during workout: {self.workout}'
     
     class Meta:
         ordering = ['workout', 'order']
@@ -81,7 +80,7 @@ class Set(models.Model):
 
     
     def __str__(self):
-        return f'{self.weight} lbs for {self.reps}'
+        return f'{self.weight} lbs for {self.reps} during exercise: {self.workout_exercise}'
     
     class Meta:
         ordering = ['workout_exercise', 'order']
