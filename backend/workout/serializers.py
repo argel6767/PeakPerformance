@@ -8,7 +8,8 @@ class WorkoutDtoSerializer(ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = '__all__'
+        fields = ['id', 'duration', 'date', 'user']  # Only include necessary fields
+        read_only_fields = ['user']  # Mark user as read-only
 
 class WorkoutExerciseDtoSerializer(ModelSerializer):
 

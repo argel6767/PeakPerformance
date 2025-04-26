@@ -29,7 +29,7 @@ class WorkoutViewSet(ModelViewSet):
         workout = Workout.createWorkoutEntry(email=user.email, workout_dto=serializer)
         workout_serialized = self.get_serializer(instance=workout)
         
-        return Response({'success': workout_serialized.data}, status.HTTP_201_CREATED)
+        return Response({'success': workout_serialized.data}, status=status.HTTP_201_CREATED)
 
 '''
 CRUD API for WorkoutExercise Model
