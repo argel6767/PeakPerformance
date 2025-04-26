@@ -8,7 +8,7 @@ Models for movements and muscles worked in said movements
 class Muscle(models.Model):
     MUSCLE_CATEGORIES = [('arms', 'Arms'), ('back', 'Back'), ('chest', 'Chest'),
                          ('core', 'Core'), ('legs', 'Legs'), ('shoulders', 'Shoulders'),]
-    name = models.CharField(max_length=15, unique=True)
+    name = models.CharField(max_length=50, unique=True)
     category = models.CharField(max_length=10, choices=MUSCLE_CATEGORIES, blank=True)
     
     def __str__(self):

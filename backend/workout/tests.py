@@ -357,3 +357,97 @@ class WorkoutAPITest(APITestCase):
 
         #Check DB
         self.assertRaises(Set.DoesNotExist, lambda: Set.objects.get(order=0))
+
+    def test_get_workout_summary(self):
+        # Arrange
+        self.client.force_login(self.user)
+        workout_pk = self.workout.pk
+        
+        # Act
+        response = self.client.get(f'/api/workouts/{workout_pk}/summary/')
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('workout' in response.data)
+        
+        # Check specific data elements
+        self.assertEqual(response.data['workout']['id'], workout_pk)
+        self.assertEqual(response.data[f'exercise {self.workout_exercise.order}']['id'], self.workout_exercise.id)
+        self.assertEqual(response.data[f'sets for exercise {self.workout_exercise.order}'][0]['id'], self.set.id)
+        
+        # Verify movement and muscle data are included
+        exercise_data = response.data[f'exercise {self.workout_exercise.order}']
+        self.assertTrue('movement' in exercise_data)
+        self.assertTrue('muscles_worked' in exercise_data['movement'])
+
+    def test_get_workout_summary_by_unauthenticated_user(self):
+        # Act
+        response = self.client.get(f'/api/workouts/{self.workout.pk}/summary/')
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_workout_summary_with_nonexistent_workout(self):
+        # Arrange
+        self.client.force_login(self.user)
+        non_existent_id = 9999  # Assuming this ID does not exist
+        
+        # Act
+        response = self.client.get(f'/api/workouts/{non_existent_id}/summary/')
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue('error' in response.data)
+
+    def test_get_workout_summary_workout_from_another_user(self):
+        # Arrange
+        another_user = CustomUser.objects.create_user(
+            email='another@example.com',
+            username='another',
+            password='password',
+            is_staff=False
+        )
+        self.client.force_login(another_user)
+        
+        # Act
+        response = self.client.get(f'/api/workouts/{self.workout.pk}/summary/')
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue('error' in response.data)
+
+    def test_get_workout_summary_has_complete_exercise_data(self):
+        # Arrange
+        self.client.force_login(self.user)
+        
+        # Create additional exercise and set for more complete testing
+        additional_exercise = WorkoutExercise.objects.create(
+            workout=self.workout,
+            movement=self.movement,
+            order=1
+        )
+        
+        additional_set = Set.objects.create(
+            weight=150,
+            reps=8,
+            workout_exercise=additional_exercise,
+            order=0
+        )
+        
+        # Act
+        response = self.client.get(f'/api/workouts/{self.workout.pk}/summary/')
+        
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Check that both exercises are included
+        self.assertTrue(f'exercise {self.workout_exercise.order}' in response.data)
+        self.assertTrue(f'exercise {additional_exercise.order}' in response.data)
+        
+        # Check that sets for both exercises are included
+        self.assertTrue(f'sets for exercise {self.workout_exercise.order}' in response.data)
+        self.assertTrue(f'sets for exercise {additional_exercise.order}' in response.data)
+        
+        # Verify exercise data correctness
+        self.assertEqual(response.data[f'exercise {additional_exercise.order}']['id'], additional_exercise.id)
+        self.assertEqual(response.data[f'sets for exercise {additional_exercise.order}'][0]['id'], additional_set.id)

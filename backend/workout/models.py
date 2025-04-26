@@ -1,6 +1,6 @@
 from datetime import timedelta, date
 from django.db import models
-from movement.models import Movement
+from movement.models import Movement, Muscle
 from users.models import CustomUser
 
 # Create your models here.
@@ -32,24 +32,33 @@ class Workout(models.Model):
         # Create and return the workout with only the non-None fields
         return Workout.objects.create(**create_kwargs)
     
-    #Returns all data from workout, including the WorkoutExercises and their child sets
+    #Returns all data from workout, including the WorkoutExercises and their child sets, Movements done during each WorkoutExercise and Muscles Worked
     @staticmethod
     def get_workout_summary(user: CustomUser, workout_id):
         from .serializers import WorkoutDtoSerializer, WorkoutExerciseDtoSerializer, SetDtoSerializer #grab serializers to make json
+        from movement.serializers import MovementSerializer, MuscleSerializer
     
-        workout = Workout.objects.get(user=user, id=workout_id)
+        workout = Workout.objects.get(user=user, id=workout_id) ##Get Workout
         workout_data = WorkoutDtoSerializer(workout).data
-        
         workout_summary = {'workout': workout_data}
         
-        exercises = WorkoutExercise.objects.filter(workout=workout)
-        for exercise in exercises:
+        exercises = WorkoutExercise.objects.filter(workout=workout) #Get all exercises attached to workout
+        
+        for exercise in exercises: ##Grab info for each exercise
             exercise_data = WorkoutExerciseDtoSerializer(exercise).data
+            
+            movement = Movement.objects.get(pk=exercise_data['movement']) #Grab the movement done during the workout
+            movement_data = MovementSerializer(movement).data
+            
+            muscles_pks = movement_data['muscles_worked'] #Grab the muscles worked with the movement done
+            muscles = Muscle.objects.filter(id__in=muscles_pks)
+            muscles_data = MuscleSerializer(muscles, many=True).data
+            
+            movement_data['muscles_worked'] = muscles_data #Map the data fetched, instead of just their pks
+            exercise_data['movement'] = movement_data
             workout_summary[f'exercise {exercise.order}'] = exercise_data
             
-            
-            
-            sets = Set.objects.filter(workout_exercise=exercise)
+            sets = Set.objects.filter(workout_exercise=exercise) #Grab sets of exercise
             workout_summary[f'sets for exercise {exercise.order}'] = SetDtoSerializer(sets, many=True).data
         
         return workout_summary
