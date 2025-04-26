@@ -1,6 +1,7 @@
 from .serializers import WorkoutDtoSerializer, WorkoutExerciseDtoSerializer, SetDtoSerializer
 from .models import Workout, WorkoutExercise, Set
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -30,6 +31,21 @@ class WorkoutViewSet(ModelViewSet):
         workout_serialized = self.get_serializer(instance=workout)
         
         return Response({'success': workout_serialized.data}, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['get'], url_path='summary')
+    def get(self, request, pk= None):
+        
+        if (pk is None):
+            return Response({'error': "No workout ID given"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        #Try to find workout, if it doesn't exist then return a 404
+        try:
+            workout_summary = Workout.get_workout_summary(user=user, workout_id=pk)
+            return Response(workout_summary, status=status.HTTP_200_OK)
+        except Workout.DoesNotExist:
+            return Response({'error': f'No workout found with ID: {pk} and/or attached to user: {user.email}'}, status=status.HTTP_404_NOT_FOUND)
+    
 
 '''
 CRUD API for WorkoutExercise Model

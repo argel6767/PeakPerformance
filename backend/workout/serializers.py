@@ -15,10 +15,10 @@ class WorkoutExerciseDtoSerializer(ModelSerializer):
 
     class Meta:
         model = WorkoutExercise
-        fields = '__all__'
+        fields = ['id', 'workout', 'movement', 'order']
 
 class SetDtoSerializer(ModelSerializer):
     
     class Meta:
         model = Set
-        fields = '__all__'
+        fields = ['id','weight', 'reps', 'workout_exercise', 'order']

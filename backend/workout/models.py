@@ -32,6 +32,29 @@ class Workout(models.Model):
         # Create and return the workout with only the non-None fields
         return Workout.objects.create(**create_kwargs)
     
+    #Returns all data from workout, including the WorkoutExercises and their child sets
+    @staticmethod
+    def get_workout_summary(user: CustomUser, workout_id):
+        from .serializers import WorkoutDtoSerializer, WorkoutExerciseDtoSerializer, SetDtoSerializer #grab serializers to make json
+    
+        workout = Workout.objects.get(user=user, id=workout_id)
+        workout_data = WorkoutDtoSerializer(workout).data
+        
+        workout_summary = {'workout': workout_data}
+        
+        exercises = WorkoutExercise.objects.filter(workout=workout)
+        for exercise in exercises:
+            exercise_data = WorkoutExerciseDtoSerializer(exercise).data
+            workout_summary[f'exercise {exercise.order}'] = exercise_data
+            
+            
+            
+            sets = Set.objects.filter(workout_exercise=exercise)
+            workout_summary[f'sets for exercise {exercise.order}'] = SetDtoSerializer(sets, many=True).data
+        
+        return workout_summary
+
+    
     def __str__(self):
         return f"{self.user.first_name}'s workout on {self.date}, lasted for {self.duration}"
     
