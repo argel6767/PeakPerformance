@@ -15,12 +15,14 @@ def shut_down_server_test():
     docker_path = determine_docker_path_test()
     process = subprocess.run(['docker-compose', 'down'], cwd=docker_path, shell=is_os_windows)
     print(process)
+    exit()
     
 def shut_down_server_run():
     print('SHUTTING DOWN SERVER')
-    docker_path = determine_docker_path_run
+    docker_path = determine_docker_path_run()
     process = subprocess.run(['docker-compose', 'down'], cwd=docker_path, shell=is_os_windows)
     print(process)
+    exit()
     
 def main():
     shut_down_server_run()
