@@ -1,9 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 from analysis.analysis import *
+from analysis.services import get_progress_overload_rate, get_one_rep_max_for_movement
+from analysis.errors import InvalidDateRangeError, NoExerciseEntryFound, NoSetEntriesFound, NoMovementEntryFound
 from users.models import UserWeight
-from workout.models import Set
+from workout.models import Workout, WorkoutExercise, Set
+from movement.models import Movement, Muscle
 
 # Create your tests here.
 class AnalysisTestCase(TestCase):
@@ -35,3 +39,141 @@ class AnalysisTestCase(TestCase):
     def test_calculate_relative_strength(self):
         expected_relative_strength = self.expected_orm / self.userWeight.weight
         self.assertEqual(expected_relative_strength, calculate_relative_strength(self.expected_orm, self.userWeight))
+
+class ServicesTestCase(TestCase):
+    def setUp(self):
+        # Create a test user
+        self.user = get_user_model().objects.create_user(
+            email='test@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User'
+        )
+        
+        self.muscle = Muscle.objects.create(
+            name='Chest',
+            category='chest'
+        )
+        
+        # Create a test movement
+        self.movement = Movement.objects.create(
+            name='Bench Press',
+            type='strength'
+        )
+        self.movement.muscles_worked.set([self.muscle])
+        
+        self.no_workout_movement = Movement.objects.create(
+            name='Chest Fly',
+            type='strength'
+        )
+        self.movement.muscles_worked.set([self.muscle])
+        
+        # Create test workouts with different dates
+        self.today = datetime.now().date()
+        self.week_ago = self.today - timedelta(days=7)
+        self.two_weeks_ago = self.today - timedelta(days=14)
+        
+        # Create recent workout
+        self.recent_workout = Workout.objects.create(
+            user=self.user,
+            date=self.today
+        )
+        
+        # Create baseline workout
+        self.baseline_workout = Workout.objects.create(
+            user=self.user,
+            date=self.two_weeks_ago
+        )
+        
+        # Create workout exercises
+        self.recent_exercise = WorkoutExercise.objects.create(
+            workout=self.recent_workout,
+            movement=self.movement,
+            order=1
+        )
+        
+        self.baseline_exercise = WorkoutExercise.objects.create(
+            workout=self.baseline_workout,
+            movement=self.movement,
+            order=1
+        )
+        
+        # Create sets for recent workout
+        Set.objects.create(
+            weight=135,
+            reps=10,
+            workout_exercise=self.recent_exercise,
+            order=1
+        )
+        Set.objects.create(
+            weight=155,
+            reps=8,
+            workout_exercise=self.recent_exercise,
+            order=2
+        )
+        
+        # Create sets for baseline workout
+        Set.objects.create(
+            weight=115,
+            reps=10,
+            workout_exercise=self.baseline_exercise,
+            order=1
+        )
+        Set.objects.create(
+            weight=135,
+            reps=8,
+            workout_exercise=self.baseline_exercise,
+            order=2
+        )
+
+    def test_get_progress_overload_rate(self):
+        # Test with valid data
+        result = get_progress_overload_rate(self.movement.id, weeks_ago=2)
+        
+        # Calculate expected values
+        recent_volume = (135 * 10) + (155 * 8)  # 1350 + 1240 = 2590
+        baseline_volume = (115 * 10) + (135 * 8)  # 1150 + 1080 = 2230
+        expected_rate = (recent_volume - baseline_volume) / baseline_volume
+        
+        self.assertEqual(result.data['movement']['id'], self.movement.id)
+        self.assertEqual(result.data['baseline_week_volume'], baseline_volume)
+        self.assertEqual(result.data['most_recent_week_volume'], recent_volume)
+        self.assertEqual(result.data['progressive_overload_change'], expected_rate)
+        self.assertEqual(result.data['week_difference'], 2)
+        
+        # Test with invalid date range (no workouts in that period)
+        with self.assertRaises(InvalidDateRangeError):
+            get_progress_overload_rate(self.movement.id, weeks_ago=10)
+
+    def test_get_one_rep_max_for_movement(self):
+        # Test with valid data
+        result = get_one_rep_max_for_movement(self.movement.id)
+        
+        # The highest performing set is 155 lbs for 8 reps
+        # Using Epley formula: weight * (1 + (epley constant * reps))
+        expected_orm = 135 * (1 + (EPLEY_CONSTANT * 10))
+        
+        self.assertEqual(result.data['movement']['id'], self.movement.id)
+        self.assertEqual(result.data['estimated_orm'], expected_orm)
+        
+        # Test with non-existent movement
+        with self.assertRaises(NoMovementEntryFound):
+            get_one_rep_max_for_movement(999)  # Non-existent movement ID
+            
+        # Test with movement that does not exist
+        movement_no_sets = Movement.objects.create(
+            name='No Sets Movement',
+            type='cardio'
+        )
+        movement_no_sets.muscles_worked.set([self.muscle])
+        exercise_no_sets = WorkoutExercise.objects.create(
+            workout=self.recent_workout,
+            movement=movement_no_sets,
+            order=2
+        )
+        
+        with self.assertRaises(NoExerciseEntryFound):
+            get_one_rep_max_for_movement(self.no_workout_movement.id)
+            
+        with self.assertRaises(NoSetEntriesFound):
+            get_one_rep_max_for_movement(movement_no_sets.id)

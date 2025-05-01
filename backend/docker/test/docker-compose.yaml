@@ -37,7 +37,7 @@ services:
 
     depends_on:
       - db
-    command: python -m pytest users/tests.py movement/tests.py workout/tests.py friendships/tests.py -v
+    command: python -m pytest users/tests.py movement/tests.py workout/tests.py friendships/tests.py analysis/tests.py -v
 
 volumes:
   postgres_data:

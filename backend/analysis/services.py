@@ -41,11 +41,11 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int) -> ProgressOver
     ).distinct()
     
     if len(baseline_workouts) == 0: #no workout with movement done in baseline_weeks_ago
-        # find the most recent that happend before baseline
+        # find the most recent that happened before baseline
         baseline_workouts = Workout.objects.filter(
-        date__range= [baseline_date],
-        exercises__movement=movement
-        ).distinct()
+            date__lt=baseline_date,
+            exercises__movement=movement
+        ).order_by('-date').distinct()
         
     if len(baseline_workouts) == 0:
         raise InvalidDateRangeError(f"No workout with {movement.name} done {weeks_ago} or more weeks ago. Try a smaller range")
@@ -72,7 +72,9 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int) -> ProgressOver
 
 def get_one_rep_max_for_movement(movement_id: int) -> EstimatedOneRepMaxDtoSerializer:
     #get movement
-    movement = Movement.objects.get(id=movement_id)
+    movement = Movement.objects.filter(id=movement_id).first()
+    if not movement:
+        raise NoMovementEntryFound(f'No movement found with id: {movement_id}')
 
     #get most recent workout with movement done
     exercise = WorkoutExercise.objects.filter(
@@ -86,7 +88,6 @@ def get_one_rep_max_for_movement(movement_id: int) -> EstimatedOneRepMaxDtoSeria
     
     largest_total_volume = 0
     max_set = None
-    
     # find highest performing set in exercise to use as `top set`
     for set in sets:
         volume = calculate_total_weight_volume([set])
