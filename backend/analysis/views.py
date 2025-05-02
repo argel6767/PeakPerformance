@@ -31,7 +31,3 @@ def get_orm(request, movement_id):
         return Response(result.data, status=status.HTTP_200_OK)
     except (NoMovementEntryFoundError, NoExerciseEntryFoundError, NoSetEntriesFoundError) as e:
         return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
-    
-@api_view(['GET'])
-def test_view(request):
-    return Response({"message": "Analysis app is working"})
