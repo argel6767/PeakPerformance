@@ -31,3 +31,5 @@ def get_orm(request, movement_id):
         return Response(result.data, status=status.HTTP_200_OK)
     except (NoMovementEntryFoundError, NoExerciseEntryFoundError, NoSetEntriesFoundError) as e:
         return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+#TODO add endpoint to see a movements trend over a set amount of time
