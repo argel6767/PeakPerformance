@@ -1,3 +1,4 @@
+from backend.users.models import CustomUser
 from .serializers import *
 from workout.models import WorkoutExercise, Workout
 from movement.models import Movement
@@ -6,7 +7,7 @@ from .analysis import *
 from .errors import *
 
 
-def get_progress_overload_rate(movement_id: int, weeks_ago: int) -> ProgressOverloadRateDtoSerializer:
+def get_progress_overload_rate(movement_id: int, weeks_ago: int, user: CustomUser) -> ProgressOverloadRateDtoSerializer:
     # Get the movement
     movement = Movement.objects.get(id=movement_id)
     
@@ -18,6 +19,7 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int) -> ProgressOver
     recent_workouts = Workout.objects.filter(
         date__range=[today - timedelta(days=7), today],
         exercises__movement=movement
+        
     ).distinct()
     
     if len(recent_workouts) == 0: # movement not done that past week
@@ -70,7 +72,7 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int) -> ProgressOver
         'week_difference': weeks_ago
     })
 
-def get_one_rep_max_for_movement(movement_id: int) -> EstimatedOneRepMaxDtoSerializer:
+def get_one_rep_max_for_movement(movement_id: int, user_id:int) -> EstimatedOneRepMaxDtoSerializer:
     #get movement
     movement = Movement.objects.filter(id=movement_id).first()
     if not movement:
@@ -78,7 +80,7 @@ def get_one_rep_max_for_movement(movement_id: int) -> EstimatedOneRepMaxDtoSeria
 
     #get most recent workout with movement done
     exercise = WorkoutExercise.objects.filter(
-    movement=movement).select_related('workout').prefetch_related('sets').order_by('-workout__date').first()
+    movement=movement, workout__user_id = user_id).select_related('workout').prefetch_related('sets').order_by('-workout__date').first()
     if not exercise:
         raise NoExerciseEntryFound(f"No WorkoutExercise done with movement {movement.name}")
 
