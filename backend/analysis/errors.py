@@ -4,17 +4,17 @@ class InvalidDateRangeError(RuntimeError):
             super().__init__(self.message)
 
 
-class NoMovementEntryFound(RuntimeError):
+class NoMovementEntryFoundError(RuntimeError):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
-class NoExerciseEntryFound(RuntimeError):
+class NoExerciseEntryFoundError(RuntimeError):
     def __init__(self, message):
             self.message = message
             super().__init__(self.message)
             
-class NoSetEntriesFound(RuntimeError):
+class NoSetEntriesFoundError(RuntimeError):
     def __init__(self, message):
             self.message = message
             super().__init__(self.message)

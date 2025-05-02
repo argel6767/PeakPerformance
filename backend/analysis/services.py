@@ -7,9 +7,11 @@ from .analysis import *
 from .errors import *
 
 
-def get_progress_overload_rate(movement_id: int, weeks_ago: int, user: CustomUser) -> ProgressOverloadRateDtoSerializer:
+def get_progressive_overload_rate(movement_id: int, weeks_ago: int, user: CustomUser) -> ProgressOverloadRateDtoSerializer:
     # Get the movement
-    movement = Movement.objects.get(id=movement_id)
+    movement = Movement.objects.filter(id=movement_id).first()
+    if not movement:
+        raise NoMovementEntryFoundError(f'No movement found with id: {movement_id}')
     
     # Calculate date ranges
     today = datetime.now().date()
@@ -27,6 +29,9 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int, user: CustomUse
         most_recent_workout = Workout.objects.filter(
             exercises__movement = movement, user=user).latest('date'),
         recent_workouts = [most_recent_workout]
+    
+    if len(recent_workouts) == 0: # movement never done before
+        raise NoExerciseEntryFoundError(f'No exercise found with movement {movement.name}')
     
     # Calculate total volume for most recent week
     recent_volume = 0
@@ -78,7 +83,7 @@ def get_one_rep_max_for_movement(movement_id: int, user) -> EstimatedOneRepMaxDt
     # Get movement
     movement = Movement.objects.filter(id=movement_id).first()
     if not movement:
-        raise NoMovementEntryFound(f'No movement found with id: {movement_id}')
+        raise NoMovementEntryFoundError(f'No movement found with id: {movement_id}')
 
     # Get most recent workout with movement done
     exercise = WorkoutExercise.objects.filter(
@@ -87,11 +92,11 @@ def get_one_rep_max_for_movement(movement_id: int, user) -> EstimatedOneRepMaxDt
     ).select_related('workout').prefetch_related('sets').order_by('-workout__date').first()
     
     if not exercise:
-        raise NoExerciseEntryFound(f"No WorkoutExercise done with movement {movement.name}")
+        raise NoExerciseEntryFoundError(f"No WorkoutExercise done with movement {movement.name}")
 
     sets = exercise.sets.all()
     if len(sets) == 0:
-        raise NoSetEntriesFound(f"No sets attached to WorkoutExercise: {exercise.pk}")
+        raise NoSetEntriesFoundError(f"No sets attached to WorkoutExercise: {exercise.pk}")
     
     largest_total_volume = 0
     max_set = None

@@ -3,8 +3,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from analysis.analysis import *
-from analysis.services import get_progress_overload_rate, get_one_rep_max_for_movement
-from analysis.errors import InvalidDateRangeError, NoExerciseEntryFound, NoSetEntriesFound, NoMovementEntryFound
+from analysis.services import get_progressive_overload_rate, get_one_rep_max_for_movement
+from analysis.errors import *
 from users.models import UserWeight
 from workout.models import Workout, WorkoutExercise, Set
 from movement.models import Movement, Muscle
@@ -128,7 +128,7 @@ class ServicesTestCase(TestCase):
 
     def test_get_progress_overload_rate(self):
         # Test with valid data
-        result = get_progress_overload_rate(self.movement.id, weeks_ago=2, user=self.user)
+        result = get_progressive_overload_rate(self.movement.id, weeks_ago=2, user=self.user)
         
         # Calculate expected values
         recent_volume = (135 * 10) + (155 * 8)  # 1350 + 1240 = 2590
@@ -141,9 +141,13 @@ class ServicesTestCase(TestCase):
         self.assertEqual(result.data['progressive_overload_change'], expected_rate)
         self.assertEqual(result.data['week_difference'], 2)
         
+        # Test with invalid id
+        with self.assertRaises(NoMovementEntryFoundError):
+            get_progressive_overload_rate(9999, weeks_ago=10, user=self.user)
+        
         # Test with invalid date range (no workouts in that period)
         with self.assertRaises(InvalidDateRangeError):
-            get_progress_overload_rate(self.movement.id, weeks_ago=10, user=self.user)
+            get_progressive_overload_rate(self.movement.id, weeks_ago=10, user=self.user)
 
     def test_get_one_rep_max_for_movement(self):
         # Test with valid data
@@ -157,7 +161,7 @@ class ServicesTestCase(TestCase):
         self.assertEqual(result.data['estimated_orm'], expected_orm)
         
         # Test with non-existent movement
-        with self.assertRaises(NoMovementEntryFound):
+        with self.assertRaises(NoMovementEntryFoundError):
             get_one_rep_max_for_movement(999, self.user)  # Non-existent movement ID
             
         # Test with movement that does not exist
@@ -172,8 +176,8 @@ class ServicesTestCase(TestCase):
             order=2
         )
         
-        with self.assertRaises(NoExerciseEntryFound):
+        with self.assertRaises(NoExerciseEntryFoundError):
             get_one_rep_max_for_movement(self.no_workout_movement.id, self.user)
             
-        with self.assertRaises(NoSetEntriesFound):
+        with self.assertRaises(NoSetEntriesFoundError):
             get_one_rep_max_for_movement(movement_no_sets.id, self.user)
