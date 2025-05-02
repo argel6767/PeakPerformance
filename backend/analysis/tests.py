@@ -1,6 +1,11 @@
 from datetime import datetime, timedelta
 from django.test import TestCase
+from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.test import Client
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from analysis.analysis import *
 from analysis.services import get_progressive_overload_rate, get_one_rep_max_for_movement
@@ -181,3 +186,149 @@ class ServicesTestCase(TestCase):
             
         with self.assertRaises(NoSetEntriesFoundError):
             get_one_rep_max_for_movement(movement_no_sets.id, self.user)
+
+class ViewsTestCase(APITestCase):
+    def setUp(self):
+        # Create a test user
+        self.user = get_user_model().objects.create_user(
+            email='test@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User'
+        )
+        
+        self.muscle = Muscle.objects.create(
+            name='Chest',
+            category='chest'
+        )
+        
+        # Create a test movement
+        self.movement = Movement.objects.create(
+            name='Bench Press',
+            type='strength'
+        )
+        self.movement.muscles_worked.set([self.muscle])
+        
+        # Create test workouts with different dates
+        self.today = datetime.now().date()
+        self.week_ago = self.today - timedelta(days=7)
+        self.two_weeks_ago = self.today - timedelta(days=14)
+        
+        # Create recent workout
+        self.recent_workout = Workout.objects.create(
+            user=self.user,
+            date=self.today
+        )
+        
+        # Create baseline workout
+        self.baseline_workout = Workout.objects.create(
+            user=self.user,
+            date=self.two_weeks_ago
+        )
+        
+        # Create workout exercises
+        self.recent_exercise = WorkoutExercise.objects.create(
+            workout=self.recent_workout,
+            movement=self.movement,
+            order=1
+        )
+        
+        self.baseline_exercise = WorkoutExercise.objects.create(
+            workout=self.baseline_workout,
+            movement=self.movement,
+            order=1
+        )
+        
+        # Create sets for recent workout
+        Set.objects.create(
+            weight=135,
+            reps=10,
+            workout_exercise=self.recent_exercise,
+            order=1
+        )
+        Set.objects.create(
+            weight=155,
+            reps=8,
+            workout_exercise=self.recent_exercise,
+            order=2
+        )
+        
+        # Create sets for baseline workout
+        Set.objects.create(
+            weight=115,
+            reps=10,
+            workout_exercise=self.baseline_exercise,
+            order=1
+        )
+        Set.objects.create(
+            weight=135,
+            reps=8,
+            workout_exercise=self.baseline_exercise,
+            order=2
+        )
+
+        # Force authentication for the test client
+        self.client.force_authenticate(user=self.user)
+
+    def test_get_progressive_overload_success(self):
+        url = reverse('get-progressive-overload')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}&weeks_ago=2')
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('movement', response.data)
+        self.assertIn('baseline_week_volume', response.data)
+        self.assertIn('most_recent_week_volume', response.data)
+        self.assertIn('progressive_overload_change', response.data)
+        self.assertIn('week_difference', response.data)
+
+    def test_get_progressive_overload_invalid_movement(self):
+        url = reverse('get-progressive-overload')
+        response = self.client.get(f'{url}?movement_id=999&weeks_ago=2')
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
+
+    def test_get_progressive_overload_invalid_weeks(self):
+        url = reverse('get-progressive-overload')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}&weeks_ago=invalid')
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+
+    def test_get_progressive_overload_missing_params(self):
+        url = reverse('get-progressive-overload')
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+
+    def test_get_orm_success(self):
+        url = reverse('get-one-rep-max', args=[self.movement.id])
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('movement', response.data)
+        self.assertIn('estimated_orm', response.data)
+
+    def test_get_orm_invalid_movement(self):
+        url = reverse('get-one-rep-max', args=[999])
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
+
+    def test_get_orm_unauthorized(self):
+        # Create a new client without authentication
+        client = APIClient()
+        url = reverse('get-one-rep-max', args=[self.movement.id])
+        response = client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_progressive_overload_unauthorized(self):
+        # Create a new client without authentication
+        client = APIClient()
+        url = reverse('get-progressive-overload')
+        response = client.get(f'{url}?movement_id={self.movement.id}&weeks_ago=2')
+        
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

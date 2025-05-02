@@ -18,8 +18,8 @@ def get_progressive_overload(request):
         return Response(result.data, status=status.HTTP_200_OK)
     except (NoMovementEntryFoundError, NoExerciseEntryFoundError, InvalidDateRangeError) as e:
         return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
-    except ValueError as ve:
-        return Response({'error': str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+    except (ValueError, TypeError) as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 # get one rep max for movement endpoint
 @api_view(['GET'])
