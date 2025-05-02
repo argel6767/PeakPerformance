@@ -1,4 +1,4 @@
-from backend.users.models import CustomUser
+from users.models import CustomUser
 from .serializers import *
 from workout.models import WorkoutExercise, Workout
 from movement.models import Movement
@@ -18,14 +18,14 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int, user: CustomUse
     # Get workouts for the movement in the most recent week
     recent_workouts = Workout.objects.filter(
         date__range=[today - timedelta(days=7), today],
-        exercises__movement=movement
-        
+        exercises__movement=movement,
+        user=user
     ).distinct()
     
     if len(recent_workouts) == 0: # movement not done that past week
         #look for the last time they did it
         most_recent_workout = Workout.objects.filter(
-            exercises__movement = movement).latest('date');
+            exercises__movement = movement, user=user).latest('date'),
         recent_workouts = [most_recent_workout]
     
     # Calculate total volume for most recent week
@@ -39,14 +39,16 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int, user: CustomUse
     # Get workouts for the movement in the baseline week
     baseline_workouts = Workout.objects.filter(
         date__range=[baseline_date - timedelta(days=7), baseline_date],
-        exercises__movement=movement
+        exercises__movement=movement,
+        user=user
     ).distinct()
     
     if len(baseline_workouts) == 0: #no workout with movement done in baseline_weeks_ago
         # find the most recent that happened before baseline
         baseline_workouts = Workout.objects.filter(
             date__lt=baseline_date,
-            exercises__movement=movement
+            exercises__movement=movement,
+            user=user
         ).order_by('-date').distinct()
         
     if len(baseline_workouts) == 0:
@@ -72,15 +74,18 @@ def get_progress_overload_rate(movement_id: int, weeks_ago: int, user: CustomUse
         'week_difference': weeks_ago
     })
 
-def get_one_rep_max_for_movement(movement_id: int, user_id:int) -> EstimatedOneRepMaxDtoSerializer:
-    #get movement
+def get_one_rep_max_for_movement(movement_id: int, user) -> EstimatedOneRepMaxDtoSerializer:
+    # Get movement
     movement = Movement.objects.filter(id=movement_id).first()
     if not movement:
         raise NoMovementEntryFound(f'No movement found with id: {movement_id}')
 
-    #get most recent workout with movement done
+    # Get most recent workout with movement done
     exercise = WorkoutExercise.objects.filter(
-    movement=movement, workout__user_id = user_id).select_related('workout').prefetch_related('sets').order_by('-workout__date').first()
+        movement=movement, 
+        workout__user=user  # Changed from workout__user_id to workout__user
+    ).select_related('workout').prefetch_related('sets').order_by('-workout__date').first()
+    
     if not exercise:
         raise NoExerciseEntryFound(f"No WorkoutExercise done with movement {movement.name}")
 
@@ -90,7 +95,8 @@ def get_one_rep_max_for_movement(movement_id: int, user_id:int) -> EstimatedOneR
     
     largest_total_volume = 0
     max_set = None
-    # find highest performing set in exercise to use as `top set`
+    
+    # Find highest performing set in exercise to use as `top set`
     for set in sets:
         volume = calculate_total_weight_volume([set])
         if volume > largest_total_volume:
@@ -100,6 +106,6 @@ def get_one_rep_max_for_movement(movement_id: int, user_id:int) -> EstimatedOneR
     one_rep_max = calculate_epley_formula(max_set)
     
     return EstimatedOneRepMaxDtoSerializer({
-        'movement':movement,
-        'estimated_orm':one_rep_max
+        'movement': movement,
+        'estimated_orm': one_rep_max
     })

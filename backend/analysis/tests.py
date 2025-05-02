@@ -128,7 +128,7 @@ class ServicesTestCase(TestCase):
 
     def test_get_progress_overload_rate(self):
         # Test with valid data
-        result = get_progress_overload_rate(self.movement.id, weeks_ago=2)
+        result = get_progress_overload_rate(self.movement.id, weeks_ago=2, user=self.user)
         
         # Calculate expected values
         recent_volume = (135 * 10) + (155 * 8)  # 1350 + 1240 = 2590
@@ -143,11 +143,11 @@ class ServicesTestCase(TestCase):
         
         # Test with invalid date range (no workouts in that period)
         with self.assertRaises(InvalidDateRangeError):
-            get_progress_overload_rate(self.movement.id, weeks_ago=10)
+            get_progress_overload_rate(self.movement.id, weeks_ago=10, user=self.user)
 
     def test_get_one_rep_max_for_movement(self):
         # Test with valid data
-        result = get_one_rep_max_for_movement(self.movement.id)
+        result = get_one_rep_max_for_movement(self.movement.id, self.user)
         
         # The highest performing set is 155 lbs for 8 reps
         # Using Epley formula: weight * (1 + (epley constant * reps))
@@ -158,7 +158,7 @@ class ServicesTestCase(TestCase):
         
         # Test with non-existent movement
         with self.assertRaises(NoMovementEntryFound):
-            get_one_rep_max_for_movement(999)  # Non-existent movement ID
+            get_one_rep_max_for_movement(999, self.user)  # Non-existent movement ID
             
         # Test with movement that does not exist
         movement_no_sets = Movement.objects.create(
@@ -173,7 +173,7 @@ class ServicesTestCase(TestCase):
         )
         
         with self.assertRaises(NoExerciseEntryFound):
-            get_one_rep_max_for_movement(self.no_workout_movement.id)
+            get_one_rep_max_for_movement(self.no_workout_movement.id, self.user)
             
         with self.assertRaises(NoSetEntriesFound):
-            get_one_rep_max_for_movement(movement_no_sets.id)
+            get_one_rep_max_for_movement(movement_no_sets.id, self.user)
