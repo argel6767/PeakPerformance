@@ -1,19 +1,24 @@
-from users.models import CustomUser
+from users.models import CustomUser, UserWeight
 from .serializers import *
 from workout.models import WorkoutExercise, Workout
 from movement.models import Movement
 from datetime import datetime, timedelta
 from .analysis import *
 from .errors import *
+from users.errors import NoUserWeightEntriesFoundError
 
+def get_movement_or_raise(movement_id):
+    if movement_id < 1:
+        raise ValueError('Id cannot be negative!')
+    
+    movement = Movement.objects.filter(id=movement_id).first()
+    
+    if not movement:
+        raise NoMovementEntryFoundError(f'No movement found with id: {movement_id}')
+    return movement
 
 def get_progressive_overload_rate(movement_id: int, weeks_ago: int, user: CustomUser) -> ProgressOverloadRateDtoSerializer:
     # Helper functions defined at the top
-    def get_movement_or_raise(movement_id):
-        movement = Movement.objects.filter(id=movement_id).first()
-        if not movement:
-            raise NoMovementEntryFoundError(f'No movement found with id: {movement_id}')
-        return movement
     
     def find_relevant_workouts(date_start, date_end, fallback_strategy=None):
         # Get workouts in date range
@@ -97,11 +102,9 @@ def get_progressive_overload_rate(movement_id: int, weeks_ago: int, user: Custom
         'week_difference': weeks_ago
     })
 
-def get_one_rep_max_for_movement(movement_id: int, user) -> EstimatedOneRepMaxDtoSerializer:
+def get_one_rep_max_for_movement(movement_id: int, user:CustomUser) -> EstimatedOneRepMaxDtoSerializer:
     # Get movement
-    movement = Movement.objects.filter(id=movement_id).first()
-    if not movement:
-        raise NoMovementEntryFoundError(f'No movement found with id: {movement_id}')
+    movement = get_movement_or_raise(movement_id=movement_id)
 
     # Get most recent workout with movement done
     exercise = WorkoutExercise.objects.filter(
@@ -132,6 +135,26 @@ def get_one_rep_max_for_movement(movement_id: int, user) -> EstimatedOneRepMaxDt
         'movement': movement,
         'estimated_orm': one_rep_max
     })
+    
+# calculates the user's relative strength for a particular movement
+def get_relative_strength_for_movement(movement_id, user:CustomUser) -> RelativeStrengthDtoSerializer:
+    orm_dict = get_one_rep_max_for_movement(movement_id=movement_id, user=user).data
+    orm = orm_dict['estimated_orm']
+    movement = orm_dict['movement']
+    latest_weight_entry = UserWeight.objects.filter(user=user).last()
+    
+    if not latest_weight_entry:
+        raise NoUserWeightEntriesFoundError(f'No weight entries found for {user.username}!')
+    
+    relative_strength = calculate_relative_strength(orm=orm, userWeight=latest_weight_entry)
+    
+    return RelativeStrengthDtoSerializer({
+        'movement':movement,
+        'estimated_orm':orm,
+        'user_weight':latest_weight_entry.weight,
+        'relative_strength':relative_strength
+    })
+
 
     # gets all of the WorkoutExercises with the movement specified was done by the user, then finds the total weight volume
     # for each one divided by 1000 (for ease of plotting)
@@ -139,9 +162,7 @@ def get_one_rep_max_for_movement(movement_id: int, user) -> EstimatedOneRepMaxDt
 ALL_AVAILABLE_HISTORY = -1
 def get_movement_progress_points(movement_id: int, user: CustomUser, num_of_weeks_back: int = ALL_AVAILABLE_HISTORY) -> dict:
     # Get the movement
-    movement = Movement.objects.filter(id=movement_id).first()
-    if not movement:
-        raise NoMovementEntryFoundError(f'No movement found with id: {movement_id}')
+    movement = get_movement_or_raise(movement_id=movement_id)
     
     if num_of_weeks_back < -1:
         raise ValueError('number of weeks cannot be negative!')

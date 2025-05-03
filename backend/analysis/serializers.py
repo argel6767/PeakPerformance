@@ -17,8 +17,9 @@ class EstimatedOneRepMaxDtoSerializer(serializers.Serializer):
     movement = MovementSerializer()
     estimated_orm = serializers.FloatField()
 
-# This class will be used as the dto to return a user's relative strength
+# This class will be used as the dto to return a user's relative strength for a certain movement
 class RelativeStrengthDtoSerializer(serializers.Serializer):
+    movement = MovementSerializer()
     estimated_orm = serializers.FloatField()
     user_weight = serializers.FloatField()
     relative_strength = serializers.FloatField()
