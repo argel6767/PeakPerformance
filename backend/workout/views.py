@@ -33,7 +33,7 @@ class WorkoutViewSet(ModelViewSet):
         return Response({'success': workout_serialized.data}, status=status.HTTP_201_CREATED)
     
     @action(detail=True, methods=['get'], url_path='summary')
-    def get(self, request, pk= None):
+    def get_workout_summary(self, request, pk= None):
         
         if (pk is None):
             return Response({'error': "No workout ID given"}, status=status.HTTP_400_BAD_REQUEST)

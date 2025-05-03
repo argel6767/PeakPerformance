@@ -5,7 +5,9 @@ services:
     build: 
       context: ../..
       dockerfile: docker/Dockerfile
-    restart: always
+    volumes:
+      - ../../:/app  # Mount local code to container
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
@@ -34,7 +36,7 @@ services:
     
   db:
     image: postgres:latest
-    restart: always
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:

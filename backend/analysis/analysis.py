@@ -20,10 +20,10 @@ EPLEY_CONSTANT = 1/30 #.0333...
 
 # Calculates Epley Formula, ie a user's estimated one rep max
 def calculate_epley_formula(top_set:Set) -> float:
-    weight = top_set.weight
+    weight = float(top_set.weight)  # Convert Decimal to float
     reps = top_set.reps
     return weight * (1 + (EPLEY_CONSTANT * reps))
 
 # Calculates a users estimated relative strength based off their 1RM and Body weight
 def calculate_relative_strength(one_rep_max:float, userWeight:UserWeight) -> float:
-    return one_rep_max/userWeight.weight
+    return one_rep_max/float(userWeight.weight)
