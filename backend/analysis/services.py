@@ -139,6 +139,7 @@ def get_one_rep_max_for_movement(movement_id: int, user:CustomUser) -> Estimated
 # calculates the user's relative strength for a particular movement
 def get_relative_strength_for_movement(movement_id, user:CustomUser) -> RelativeStrengthDtoSerializer:
     orm_dict = get_one_rep_max_for_movement(movement_id=movement_id, user=user).data
+    print(orm_dict)
     orm = orm_dict['estimated_orm']
     movement = orm_dict['movement']
     latest_weight_entry = UserWeight.objects.filter(user=user).last()
@@ -146,7 +147,7 @@ def get_relative_strength_for_movement(movement_id, user:CustomUser) -> Relative
     if not latest_weight_entry:
         raise NoUserWeightEntriesFoundError(f'No weight entries found for {user.username}!')
     
-    relative_strength = calculate_relative_strength(orm=orm, userWeight=latest_weight_entry)
+    relative_strength = calculate_relative_strength(one_rep_max=orm, userWeight=latest_weight_entry)
     
     return RelativeStrengthDtoSerializer({
         'movement':movement,

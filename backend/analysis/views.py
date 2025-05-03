@@ -44,8 +44,8 @@ def get_relative_strength(request, movement_id):
         return Response(result.data, status=status.HTTP_200_OK)
     except (NoMovementEntryFoundError, NoExerciseEntryFoundError, NoSetEntriesFoundError, NoUserWeightEntriesFoundError) as e:
         return Response({'error':str(e)}, status=status.HTTP_404_NOT_FOUND)
-    except ValueError as ve:
-        return Response({'error':str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+    except (ValueError, TypeError) as e:
+        return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 # get a movement's progress by user
 @api_view(['GET'])

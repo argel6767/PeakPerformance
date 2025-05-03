@@ -26,4 +26,4 @@ def calculate_epley_formula(top_set:Set) -> float:
 
 # Calculates a users estimated relative strength based off their 1RM and Body weight
 def calculate_relative_strength(one_rep_max:float, userWeight:UserWeight) -> float:
-    return one_rep_max/userWeight.weight
+    return one_rep_max/float(userWeight.weight)

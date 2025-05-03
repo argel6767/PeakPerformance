@@ -8,11 +8,12 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from analysis.analysis import *
-from analysis.services import get_progressive_overload_rate, get_one_rep_max_for_movement
+from analysis.services import *
 from analysis.errors import *
 from users.models import UserWeight
 from workout.models import Workout, WorkoutExercise, Set
 from movement.models import Movement, Muscle
+from users.models import UserWeight
 
 # Create your tests here.
 class AnalysisTestCase(TestCase):
@@ -186,12 +187,70 @@ class ServicesTestCase(TestCase):
             
         with self.assertRaises(NoSetEntriesFoundError):
             get_one_rep_max_for_movement(movement_no_sets.id, self.user)
+    def test_get_relative_strength_for_movement(self):
+        # Create a user weight entry
+        user_weight = UserWeight.objects.create(
+            user=self.user,
+            weight=200.00,  # 200 lbs
+        )
+        
+        # Test with valid data
+        result = get_relative_strength_for_movement(self.movement.id, self.user)
+        print(result.data)
+        
+        # The highest performing set (from test_get_one_rep_max_for_movement) is 135 lbs for 10 reps
+        # Using Epley formula: weight * (1 + (epley constant * reps))
+        expected_orm = 135 * (1 + (EPLEY_CONSTANT * 10))
+        
+        # Calculate expected relative strength
+        expected_relative_strength = expected_orm / user_weight.weight
+        
+        # Verify the results
+        self.assertEqual(result.data['movement']['id'], self.movement.id)
+        self.assertEqual(result.data['estimated_orm'], expected_orm)
+        self.assertEqual(float(result.data['user_weight']), user_weight.weight)
+        self.assertEqual(float(result.data['relative_strength']), expected_relative_strength)
+        
+        # Test with no user weight entries
+        UserWeight.objects.filter(user=self.user).delete()
+        with self.assertRaises(NoUserWeightEntriesFoundError):
+            get_relative_strength_for_movement(self.movement.id, self.user)
+        
+        # Restore user weight for remaining tests
+        user_weight = UserWeight.objects.create(
+            user=self.user,
+            weight=200,
+        )
+        
+        # Test with non-existent movement
+        with self.assertRaises(NoMovementEntryFoundError):
+            get_relative_strength_for_movement(999, self.user)
+        
+        # Test with movement that has no exercises
+        with self.assertRaises(NoExerciseEntryFoundError):
+            get_relative_strength_for_movement(self.no_workout_movement.id, self.user)
+        
+        # Test with movement that has no sets
+        movement_no_sets = Movement.objects.create(
+            name='No Sets Movement',
+            type='cardio'
+        )
+        movement_no_sets.muscles_worked.set([self.muscle])
+        exercise_no_sets = WorkoutExercise.objects.create(
+            workout=self.recent_workout,
+            movement=movement_no_sets,
+            order=2
+        )
+        
+        with self.assertRaises(NoSetEntriesFoundError):
+            get_relative_strength_for_movement(movement_no_sets.id, self.user)
 
 class ViewsTestCase(APITestCase):
     def setUp(self):
         # Create a test user
         self.user = get_user_model().objects.create_user(
             email='test@example.com',
+            username='user1234',
             password='testpass123',
             first_name='Test',
             last_name='User'
@@ -240,7 +299,7 @@ class ViewsTestCase(APITestCase):
         )
         
         # Create sets for recent workout
-        Set.objects.create(
+        self.top_set = Set.objects.create(
             weight=135,
             reps=10,
             workout_exercise=self.recent_exercise,
@@ -441,3 +500,41 @@ class ViewsTestCase(APITestCase):
         self.assertEqual(len(response.data['progress_points']), 1)
         # Verify the date is the recent one, not the baseline
         self.assertEqual(response.data['progress_points'][0]['date'], self.today.strftime('%Y-%m-%d'))
+        
+    def test_get_relative_strength(self):
+        #Arrange
+        weight = UserWeight.objects.create(
+            user=self.user,
+            weight=200.00
+        )
+        orm = calculate_epley_formula(self.top_set)
+        expected_relative_strength = calculate_relative_strength(one_rep_max=orm, userWeight=weight)
+        
+        #Act
+        url = reverse('get-relative-strength', args=[self.movement.id])
+        response = self.client.get(f'{url}')
+        
+        print(response.data)
+        
+        #Assert
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('relative_strength', response.data)
+        self.assertAlmostEqual(expected_relative_strength, response.data['relative_strength'])
+    
+    def test_get_relative_strength_no_user_weights(self):
+        #Act
+        url = reverse('get-relative-strength', args=[self.movement.id])
+        response = self.client.get(f'{url}')
+        
+        #Assert
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
+        self.assertEqual(response.data['error'], f'No weight entries found for {self.user.username}!')
+        
+    def test_get_relative_strength_unauthorized(self):
+        client = APIClient()
+        url = reverse('get-relative-strength', args=[self.movement.id])
+        
+        response = client.get(f'{url}')
+        
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
