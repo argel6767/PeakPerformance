@@ -32,4 +32,25 @@ def get_orm(request, movement_id):
     except (NoMovementEntryFoundError, NoExerciseEntryFoundError, NoSetEntriesFoundError) as e:
         return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-#TODO add endpoint to see a movements trend over a set amount of time
+# get a movement's progress by user
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_movement_progress(request):
+    try:
+        user = request.user
+        movement_id = int(request.query_params.get('movement_id'))
+        num_of_weeks_back = request.query_params.get('num_of_weeks_back')
+        
+        if num_of_weeks_back:
+            points = get_movement_progress_points(movement_id=movement_id, user=user, num_of_weeks_back=int(num_of_weeks_back))
+            serialized_points = MovementProgressDtoSerializer(points)
+            return Response(serialized_points.data, status=status.HTTP_200_OK)
+        else: #no given weeks back, ie grab all of them
+            points = get_movement_progress_points(movement_id=movement_id, user=user)
+            serialized_points = MovementProgressDtoSerializer(points)
+            return Response(serialized_points.data, status=status.HTTP_200_OK)
+        
+    except (NoMovementEntryFoundError, NoExerciseEntryFoundError, NoSetEntriesFoundError) as e:
+        return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+    except (ValueError, TypeError) as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -332,3 +332,112 @@ class ViewsTestCase(APITestCase):
         response = client.get(f'{url}?movement_id={self.movement.id}&weeks_ago=2')
         
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        
+    def test_get_movement_progress_success_with_weeks(self):
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}&num_of_weeks_back=2')
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('movement', response.data)
+        self.assertIn('progress_points', response.data)
+        # Check that the progress points contain the expected data
+        self.assertTrue(len(response.data['progress_points']) > 0)
+        self.assertIn('date', response.data['progress_points'][0])
+        self.assertIn('volume', response.data['progress_points'][0])
+
+    def test_get_movement_progress_success_without_weeks(self):
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}')
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('movement', response.data)
+        self.assertIn('progress_points', response.data)
+        # Check that all workouts were included
+        self.assertEqual(len(response.data['progress_points']), 2)
+
+    def test_get_movement_progress_invalid_movement(self):
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id=999')
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
+        self.assertIn('No movement found', response.data['error'])
+
+    def test_get_movement_progress_invalid_weeks(self):
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}&num_of_weeks_back=invalid')
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+
+    def test_get_movement_progress_negative_weeks(self):
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}&num_of_weeks_back=-5')
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+        self.assertIn('number of weeks cannot be negative', response.data['error'])
+
+    def test_get_movement_progress_missing_movement_id(self):
+        url = reverse('get-movement-progress')
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+
+    def test_get_movement_progress_no_workouts(self):
+        # Create a new movement with no workouts
+        new_muscle = Muscle.objects.create(name='Biceps', category='arms')
+        new_movement = Movement.objects.create(name='Bicep Curl', type='strength')
+        new_movement.muscles_worked.set([new_muscle])
+        
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={new_movement.id}')
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
+        self.assertIn('No workouts found', response.data['error'])
+
+    def test_get_movement_progress_no_sets(self):
+        # Create a new movement and workout with an exercise but no sets
+        new_muscle = Muscle.objects.create(name='Biceps', category='arms')
+        new_movement = Movement.objects.create(name='Bicep Curl', type='strength')
+        new_movement.muscles_worked.set([new_muscle])
+        
+        new_workout = Workout.objects.create(
+            user=self.user,
+            date=self.today - timedelta(days=1)
+        )
+        
+        new_exercise = WorkoutExercise.objects.create(
+            workout=new_workout,
+            movement=new_movement,
+            order=1
+        )
+        
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={new_movement.id}')
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('error', response.data)
+        self.assertIn('No sets found', response.data['error'])
+
+    def test_get_movement_progress_unauthorized(self):
+        # Create a new client without authentication
+        client = APIClient()
+        url = reverse('get-movement-progress')
+        response = client.get(f'{url}?movement_id={self.movement.id}')
+        
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_movement_progress_limited_weeks(self):
+        # Test with a specific week range that only includes recent workout
+        url = reverse('get-movement-progress')
+        response = self.client.get(f'{url}?movement_id={self.movement.id}&num_of_weeks_back=1')
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('progress_points', response.data)
+        # Should only include the recent workout
+        self.assertEqual(len(response.data['progress_points']), 1)
+        # Verify the date is the recent one, not the baseline
+        self.assertEqual(response.data['progress_points'][0]['date'], self.today.strftime('%Y-%m-%d'))

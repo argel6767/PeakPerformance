@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 from workout.models import Movement
 from movement.serializers import MovementSerializer
@@ -23,3 +22,13 @@ class RelativeStrengthDtoSerializer(serializers.Serializer):
     estimated_orm = serializers.FloatField()
     user_weight = serializers.FloatField()
     relative_strength = serializers.FloatField()
+
+# This class is the serializer for an actual point (date, progress)
+class MovementProgressPointSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    volume = serializers.FloatField()
+
+# This class will be used as the dto to return a list of movement progress points
+class MovementProgressDtoSerializer(serializers.Serializer):
+    movement = MovementSerializer()
+    progress_points = MovementProgressPointSerializer(many=True)
