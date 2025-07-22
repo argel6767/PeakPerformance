@@ -27,5 +27,6 @@ urlpatterns = [
     path('api/friends/', include('friendships.urls')),
     path('api/workouts/', include(workout_patterns)),
     path('api/exercises/', include(workout_exercise_patterns)),
-    path('api/sets/', include(set_patterns))
+    path('api/sets/', include(set_patterns)),
+    path('api/analysis/', include('analysis.urls'))
 ]
