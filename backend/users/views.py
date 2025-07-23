@@ -1,3 +1,4 @@
+from datetime import timedelta
 from .serializers import (
     CustomUserSerializer, RegisterUserSerializer, LoginUserSerializer,
     TwoFactorVerifySerializer, PasswordResetRequestSerializer,
@@ -14,6 +15,8 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from django.shortcuts import get_object_or_404
 from .models import CustomUser, PasswordResetToken
 from .services import UserEmailService
+from django.core.exceptions import BadRequest
+
 
 # Create your views here.
 class UserInfoView(RetrieveUpdateAPIView):
@@ -28,19 +31,36 @@ class UserRegistrationView(CreateAPIView):
 
 class LoginView(APIView):
     def post(self, request):
+        source = request.headers.get("Source-Header")
+        if not source:
+            raise BadRequest("Source-Header required")
+
         serializer = LoginUserSerializer(data=request.data)
 
-        if serializer.is_valid():
-            user = serializer.validated_data
-            
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
+        user = serializer.validated_data
+
+        if source == "mobile":
+            refresh = RefreshToken.for_user(user)
+            refresh.set_exp(lifetime=timedelta(days=7)) #make long for mobile app users
+            access_token = str(refresh.access_token)
+            response = Response({
+                "user": CustomUserSerializer(user).data,
+                "access_token": access_token,
+                "refresh_token": str(refresh)
+            }, status=status.HTTP_200_OK)
+            return response
+
+        elif source == "web":
             UserEmailService.send_2fa_code(user)
-            
             return Response({
                 "message": "A verification code has been sent to your email",
                 "email": user.email
             }, status=status.HTTP_200_OK)
-            
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"error_message": "Invalid header given"}, status=status.HTTP_400_BAD_REQUEST)
 
 class TwoFactorVerifyView(APIView):
     def post(self, request):
