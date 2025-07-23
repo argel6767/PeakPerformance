@@ -157,6 +157,15 @@ class UserAPITest(APITestCase):
         self.assertEqual(response.cookies['access_token']['max-age'], 0)
         self.assertEqual(response.cookies['refresh_token']['max-age'], 0)
     
+    def test_logout_mobile(self):
+        response = self.client.post('/api/users/login/', self.valid_login_data, format='json', **{'HTTP_SOURCE_HEADER': 'mobile'})
+        refresh = response.data['refresh_token']
+        
+        response = self.client.post('/api/users/logout/', {}, format='json', **{'HTTP_SOURCE_HEADER': 'mobile', 'HTTP_REFRESH_TOKEN': refresh})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    
     def test_user_info(self):
         """Test retrieving user information"""
         # First authenticate the user
@@ -188,6 +197,14 @@ class UserAPITest(APITestCase):
         response = self.client.post('/api/users/refresh/', **{'HTTP_SOURCE_HEADER': 'web'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access_token', response.cookies)
+        
+    def test_token_refresh_mobile(self):
+        response = self.client.post('/api/users/login/', self.valid_login_data, format='json', **{'HTTP_SOURCE_HEADER': 'mobile'})
+        refresh = response.data['refresh_token']
+        response = self.client.post('/api/users/refresh/', **{'HTTP_SOURCE_HEADER': 'mobile', 'HTTP_REFRESH_TOKEN': refresh})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access_token', response.data)
+
     
     def test_password_reset_request(self):
         """Test requesting a password reset"""
